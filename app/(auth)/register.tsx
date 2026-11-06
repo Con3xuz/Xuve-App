@@ -15,7 +15,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button, Input } from '../../src/components/ui';
-import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, OMNI_LOGO_URL } from '../../src/constants/theme';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, XUVE_LOGO_URL } from '../../src/constants/theme';
 
 const ROLES = [
   { id: 'user', label: 'Cliente', icon: 'person', desc: 'Solicita servicios' },
@@ -129,7 +129,7 @@ export default function RegisterScreen() {
       </View>
 
       {/* Role Selection */}
-      <Text style={styles.sectionTitle}>¿Cómo usarás OMNI?</Text>
+      <Text style={styles.sectionTitle}>¿Cómo usarás Xuve?</Text>
       <View style={styles.rolesGrid}>
         {ROLES.map((role) => (
           <TouchableOpacity

@@ -13,7 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
 import { useAuthStore } from '../../src/stores/authStore';
 import api from '../../src/lib/api';
-import OmniMapView from '../../src/components/OmniMapView';
+import XuveMapView from '../../src/components/XuveMapView';
 import { useDirections } from '../../src/hooks/useDirections';
 
 export default function ActiveRideScreen() {
@@ -102,7 +102,7 @@ export default function ActiveRideScreen() {
         {/* Mapa con la ruta real del viaje */}
         {origin && destination ? (
           <View style={styles.mapWrapper}>
-            <OmniMapView
+            <XuveMapView
               origin={origin}
               destination={destination}
               routeCoordinates={route?.polyline}

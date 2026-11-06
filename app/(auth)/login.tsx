@@ -15,7 +15,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button, Input } from '../../src/components/ui';
-import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, OMNI_LOGO_URL } from '../../src/constants/theme';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, XUVE_LOGO_URL } from '../../src/constants/theme';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -76,14 +76,14 @@ export default function LoginScreen() {
               <View style={styles.logoGlow} />
               <View style={styles.logoBorder}>
                 <Image
-                  source={{ uri: OMNI_LOGO_URL }}
+                  source={{ uri: XUVE_LOGO_URL }}
                   style={styles.logoImage}
                   resizeMode="cover"
                 />
               </View>
             </View>
             <Text style={styles.title}>INICIAR SESIÓN</Text>
-            <Text style={styles.subtitle}>Accede a tu cuenta OMNI</Text>
+            <Text style={styles.subtitle}>Accede a tu cuenta Xuve</Text>
           </View>
 
           {/* Form */}
@@ -151,7 +151,7 @@ export default function LoginScreen() {
           {/* Demo credentials */}
           <View style={styles.demoContainer}>
             <Text style={styles.demoLabel}>Demo:</Text>
-            <Text style={styles.demoText}>admin@omni.ve / admin123</Text>
+            <Text style={styles.demoText}>admin@xuve.ve / admin123</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

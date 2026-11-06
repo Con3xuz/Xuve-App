@@ -96,7 +96,7 @@ export const VEHICLE_OPTIONS: readonly VehicleOption[] = [
 export const PAYMENT_OPTIONS: readonly PaymentOption[] = [
   { id: 'efectivo',   label: 'Efectivo',     icon: 'cash'            },
   { id: 'pago_movil', label: 'Pago Móvil',   icon: 'phone-portrait'  },
-  { id: 'wallet',     label: 'Wallet OMNI',  icon: 'wallet'          },
+  { id: 'wallet',     label: 'Wallet Xuve',  icon: 'wallet'          },
 ] as const;
 
 // ─── Validación del formulario ────────────────────────────────────────────────

@@ -132,7 +132,7 @@ export default function MarketScreen() {
               <Ionicons name="arrow-back" size={20} color={COLORS.textSecondary} />
               <Text style={styles.backText}>Volver</Text>
             </TouchableOpacity>
-            <Text style={styles.title}>OMNI MARKET</Text>
+            <Text style={styles.title}>XUVE MARKET</Text>
           </View>
           <TouchableOpacity style={styles.cartBtn} onPress={() => router.push('/(main)/cart')}>
             <Ionicons name="cart" size={22} color={COLORS.primary} />

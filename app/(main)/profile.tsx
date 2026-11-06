@@ -188,8 +188,8 @@ export default function ProfileScreen() {
 
         {/* Menu Section 3 */}
         <View style={styles.menuSection}>
-          <MenuItem icon="information-circle-outline" label="Acerca de OMNI" onPress={() => Alert.alert('OMNI SuperApp', 'Version 2.0\nMovilidad & Comercio para Venezuela\n\nContacto: soporte@omni.ve')} />
-          <MenuItem icon="help-circle-outline" label="Ayuda y Soporte" onPress={() => Alert.alert('Soporte', 'Para soporte contacta:\nWhatsApp: +58 412-000-0000\nEmail: soporte@omni.ve')} />
+          <MenuItem icon="information-circle-outline" label="Acerca de Xuve" onPress={() => Alert.alert('Xuve SuperApp', 'Version 2.0\nMovilidad & Comercio para Venezuela\n\nContacto: soporte@xuve.ve')} />
+          <MenuItem icon="help-circle-outline" label="Ayuda y Soporte" onPress={() => Alert.alert('Soporte', 'Para soporte contacta:\nWhatsApp: +58 412-000-0000\nEmail: soporte@xuve.ve')} />
         </View>
 
         {/* Logout */}
@@ -210,7 +210,7 @@ export default function ProfileScreen() {
           )}
         </TouchableOpacity>
 
-        <Text style={styles.versionText}>OMNI SuperApp v2.0</Text>
+        <Text style={styles.versionText}>Xuve SuperApp v2.0</Text>
       </ScrollView>
 
       {/* Edit Profile Modal */}

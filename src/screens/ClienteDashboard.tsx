@@ -15,7 +15,7 @@ import { useAuthStore } from '../stores/authStore';
 import { Card } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../constants/theme';
 import api from '../lib/api';
-import OmniMapView from '../components/OmniMapView';
+import XuveMapView from '../components/XuveMapView';
 import LocationSearchInput from '../components/LocationSearchInput';
 
 const SERVICE_TABS = [
@@ -36,7 +36,7 @@ const VEHICLE_OPTIONS = [
 const PAYMENT_OPTIONS = [
   { id: 'efectivo', label: 'Efectivo', icon: 'cash' },
   { id: 'pago_movil', label: 'Pago Móvil', icon: 'phone-portrait' },
-  { id: 'wallet', label: 'Wallet OMNI', icon: 'wallet' },
+  { id: 'wallet', label: 'Wallet Xuve', icon: 'wallet' },
 ];
 
 export default function ClienteDashboard() {
@@ -124,7 +124,7 @@ export default function ClienteDashboard() {
       </View>
 
       {/* Interactive Map */}
-      <OmniMapView
+      <XuveMapView
         origin={origin}
         destination={destination}
         showUserLocation
@@ -238,7 +238,7 @@ export default function ClienteDashboard() {
 
   const renderMarketTab = () => (
     <View style={styles.tabContent}>
-      <Text style={styles.tabTitle}>OMNI Market</Text>
+      <Text style={styles.tabTitle}>Xuve Market</Text>
       <Text style={styles.tabSubtitle}>Compra en comercios locales con delivery</Text>
       <TouchableOpacity style={styles.serviceLink} onPress={() => router.push('/(main)/market')}>
         <View style={[styles.serviceLinkIcon, { backgroundColor: COLORS.primary + '30' }]}><Ionicons name="storefront" size={24} color={COLORS.primary} /></View>

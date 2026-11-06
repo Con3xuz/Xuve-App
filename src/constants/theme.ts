@@ -1,4 +1,4 @@
-// OMNI SuperApp - Cyberpunk Elite Theme
+// Xuve SuperApp - Cyberpunk Elite Theme
 // Based on design_guidelines.json from web app
 
 export const COLORS = {
@@ -110,5 +110,5 @@ export const SHADOWS = {
   },
 };
 
-// OMNI Logo URL
-export const OMNI_LOGO_URL = 'https://customer-assets.emergentagent.com/job_12daae48-403e-4cde-9f49-5328468da1b1/artifacts/2v2raro2_Gemini_Generated_Image_fvupv3fvupv3fvup.png';
+// Xuve Logo URL
+export const XUVE_LOGO_URL = 'https://customer-assets.emergentagent.com/job_12daae48-403e-4cde-9f49-5328468da1b1/artifacts/2v2raro2_Gemini_Generated_Image_fvupv3fvupv3fvup.png';

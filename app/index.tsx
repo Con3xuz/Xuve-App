@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Animated, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuthStore } from '../src/stores/authStore';
-import { COLORS, SPACING, FONT_SIZE, OMNI_LOGO_URL } from '../src/constants/theme';
+import { COLORS, SPACING, FONT_SIZE, XUVE_LOGO_URL } from '../src/constants/theme';
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -68,14 +68,14 @@ export default function SplashScreen() {
           <View style={styles.logoGlow} />
           <View style={styles.logoBorder}>
             <Image
-              source={{ uri: OMNI_LOGO_URL }}
+              source={{ uri: XUVE_LOGO_URL }}
               style={styles.logoImage}
               resizeMode="cover"
             />
           </View>
         </View>
 
-        <Text style={styles.title}>OMNI</Text>
+        <Text style={styles.title}>XUVE</Text>
         <Text style={styles.subtitle}>SuperApp</Text>
         <Text style={styles.tagline}>Movilidad & Comercio para Venezuela</Text>
       </Animated.View>

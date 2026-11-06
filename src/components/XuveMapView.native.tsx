@@ -17,7 +17,7 @@ interface Location {
   name?: string;
 }
 
-interface OmniMapViewProps {
+interface XuveMapViewProps {
   origin?: Location | null;
   destination?: Location | null;
   onMapPress?: (location: Location) => void;
@@ -37,7 +37,7 @@ const darkMapStyle = [
   { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#2f3948' }] },
 ];
 
-export default function OmniMapView({ origin, destination, onMapPress, style, showUserLocation, routeCoordinates }: OmniMapViewProps) {
+export default function XuveMapView({ origin, destination, onMapPress, style, showUserLocation, routeCoordinates }: XuveMapViewProps) {
   const mapRef = useRef<MapView>(null);
 
   useEffect(() => {

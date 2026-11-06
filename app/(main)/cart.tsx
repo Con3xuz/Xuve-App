@@ -97,7 +97,7 @@ export default function CartScreen() {
         <View style={styles.emptyContainer}>
           <Ionicons name="bag-handle-outline" size={64} color={COLORS.textLight} />
           <Text style={styles.emptyTitle}>Carrito vacío</Text>
-          <Text style={styles.emptySubtext}>Agrega productos desde OMNI Market</Text>
+          <Text style={styles.emptySubtext}>Agrega productos desde Xuve Market</Text>
           <Button title="IR AL MARKET" onPress={() => router.back()} style={{ marginTop: SPACING.lg }} />
         </View>
       </SafeAreaView>

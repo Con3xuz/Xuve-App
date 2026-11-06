@@ -13,7 +13,7 @@ interface Location {
   name?: string;
 }
 
-interface OmniMapViewProps {
+interface XuveMapViewProps {
   origin?: Location | null;
   destination?: Location | null;
   onMapPress?: (location: Location) => void;
@@ -22,7 +22,7 @@ interface OmniMapViewProps {
   routeCoordinates?: Location[];
 }
 
-export default function OmniMapView({ origin, destination, style, routeCoordinates }: OmniMapViewProps) {
+export default function XuveMapView({ origin, destination, style, routeCoordinates }: XuveMapViewProps) {
   const htmlContent = useMemo(() => {
     const centerLat = origin?.latitude || MERIDA_CENTER.latitude;
     const centerLng = origin?.longitude || MERIDA_CENTER.longitude;

@@ -311,7 +311,7 @@ export default function RentCarScreen() {
         </TouchableOpacity>
         <View style={styles.headerRow}>
           <View>
-            <Text style={styles.title}>OMNI RENT</Text>
+            <Text style={styles.title}>XUVE RENT</Text>
             <Text style={styles.subtitle}>Alquiler de vehículos P2P</Text>
           </View>
           <TouchableOpacity style={styles.publishBtn} onPress={() => setShowPublishModal(true)}>

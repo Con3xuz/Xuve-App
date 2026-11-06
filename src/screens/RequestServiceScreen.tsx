@@ -18,7 +18,7 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
 import api from '../lib/api';
 import { showServiceNotification } from '../utils/notifications';
 import LocationSearchInput from '../components/LocationSearchInput';
-import OmniMapView from '../components/OmniMapView';
+import XuveMapView from '../components/XuveMapView';
 import { useQuote } from '../hooks/useQuote';
 import { VEHICLE_OPTIONS } from '../features/rides';
 
@@ -199,7 +199,7 @@ export default function RequestServiceScreen() {
         {/* Mapa con la ruta real (Directions vía proxy del backend) */}
         {pickupLocation && (
           <View style={styles.section}>
-            <OmniMapView
+            <XuveMapView
               origin={pickupLocation}
               destination={serviceType === 'ride' ? dropoffLocation : null}
               routeCoordinates={quote?.polyline}
