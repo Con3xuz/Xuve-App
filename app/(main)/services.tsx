@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -126,7 +126,7 @@ export default function ServicesScreen() {
           <View style={styles.emptyContainer}>
             <Ionicons name="car-outline" size={64} color={COLORS.textLight} />
             <Text style={styles.emptyText}>{activeTab === 'active' ? 'No tienes servicios activos' : 'No hay historial de servicios'}</Text>
-            <Text style={styles.emptySubtext}>{activeTab === 'active' ? 'Solicita un taxi o delivery desde el inicio' : 'Tus viajes completados aparecerÃ¡n aquÃ­'}</Text>
+            <Text style={styles.emptySubtext}>{activeTab === 'active' ? 'Solicita un taxi o delivery desde el inicio' : 'Tus viajes completados aparecerán aquí'}</Text>
           </View>
         ) : (
           services.map(renderServiceCard)

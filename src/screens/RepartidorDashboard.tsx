@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -63,14 +63,14 @@ export default function RepartidorDashboard() {
             await api.post('/subscription/activate', { role: 'socio_repartidor' });
             setHasSubscription(true);
           } catch (e: any) {
-            Alert.alert('SuscripciÃ³n requerida', e.response?.data?.detail || '$1.00 USD/dÃ­a para activarse');
+            Alert.alert('Suscripción requerida', e.response?.data?.detail || '$1.00 USD/día para activarse');
             setTogglingOnline(false);
             return;
           }
         }
         await api.post('/socio/repartidor/go-online?lat=8.5897&lng=-71.1561');
         setIsOnline(true);
-        Alert.alert('En lÃ­nea', 'Â¡Recibiendo pedidos de delivery!');
+        Alert.alert('En línea', '¡Recibiendo pedidos de delivery!');
       } else {
         await api.post('/socio/repartidor/go-offline');
         setIsOnline(false);
@@ -84,7 +84,7 @@ export default function RepartidorDashboard() {
   const acceptDelivery = async (orderId: string) => {
     try {
       await api.post(`/market/orders/${orderId}/accept-delivery`);
-      Alert.alert('Aceptado', 'Â¡Delivery aceptado!');
+      Alert.alert('Aceptado', '¡Delivery aceptado!');
       fetchData();
     } catch (e: any) { Alert.alert('Error', e.response?.data?.detail || 'Error'); }
   };
@@ -107,7 +107,7 @@ export default function RepartidorDashboard() {
         </View>
         <View style={styles.onlineToggle}>
           <Text style={[styles.onlineLabel, { color: isOnline ? COLORS.secondary : COLORS.accent }]}>
-            {isOnline ? 'EN LÃNEA' : 'DESCONECTADO'}
+            {isOnline ? 'EN LNEA' : 'DESCONECTADO'}
           </Text>
           <Switch value={isOnline} onValueChange={toggleOnline} disabled={togglingOnline}
             trackColor={{ false: COLORS.border, true: COLORS.secondary + '40' }}
@@ -118,15 +118,15 @@ export default function RepartidorDashboard() {
       <View style={[styles.mapPlaceholder, { borderColor: isOnline ? COLORS.secondary + '40' : COLORS.border }]}>
         <View style={[styles.statusDot, { backgroundColor: isOnline ? COLORS.secondary : COLORS.accent }]} />
         <Ionicons name="bicycle" size={64} color={isOnline ? COLORS.secondary + '50' : COLORS.textLight + '30'} />
-        <Text style={styles.mapText}>{isOnline ? 'Buscando deliveries...' : 'ConÃ©ctate para recibir pedidos'}</Text>
+        <Text style={styles.mapText}>{isOnline ? 'Buscando deliveries...' : 'Conéctate para recibir pedidos'}</Text>
       </View>
 
       {!hasSubscription && (
         <View style={[styles.subscriptionBanner, { backgroundColor: COLORS.secondary + '10', borderColor: COLORS.secondary + '30' }]}>
           <Ionicons name="flash" size={20} color={COLORS.secondary} />
           <View style={{ flex: 1 }}>
-            <Text style={[styles.subBannerTitle, { color: COLORS.secondary }]}>SuscripciÃ³n Diaria</Text>
-            <Text style={styles.subBannerText}>$1.00 USD/dÃ­a para recibir pedidos</Text>
+            <Text style={[styles.subBannerTitle, { color: COLORS.secondary }]}>Suscripción Diaria</Text>
+            <Text style={styles.subBannerText}>$1.00 USD/día para recibir pedidos</Text>
           </View>
           <TouchableOpacity style={[styles.subActivateBtn, { backgroundColor: COLORS.secondary }]} onPress={toggleOnline}>
             <Text style={styles.subActivateText}>ACTIVAR</Text>
@@ -156,14 +156,14 @@ export default function RepartidorDashboard() {
       {pendingDeliveries.length === 0 ? (
         <View style={styles.emptyBox}>
           <Ionicons name="bag-handle-outline" size={40} color={COLORS.textLight} />
-          <Text style={styles.emptyText}>{isOnline ? 'Esperando pedidos...' : 'ConÃ©ctate para ver pedidos'}</Text>
+          <Text style={styles.emptyText}>{isOnline ? 'Esperando pedidos...' : 'Conéctate para ver pedidos'}</Text>
         </View>
       ) : (
         pendingDeliveries.map((del: any) => (
           <View key={del.order_id || del.delivery_id} style={styles.deliveryCard}>
             <View style={{ flex: 1 }}>
               <Text style={styles.deliveryStore}>{del.store_name || 'Tienda'}</Text>
-              <Text style={styles.deliveryAddress} numberOfLines={1}>{del.delivery_address || 'DirecciÃ³n'}</Text>
+              <Text style={styles.deliveryAddress} numberOfLines={1}>{del.delivery_address || 'Dirección'}</Text>
               <Text style={styles.deliveryItems}>{del.items_count || del.items?.length || 0} productos</Text>
             </View>
             <TouchableOpacity style={[styles.acceptBtn, { backgroundColor: COLORS.secondary }]} onPress={() => acceptDelivery(del.order_id)}>

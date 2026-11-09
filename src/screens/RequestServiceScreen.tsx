@@ -39,14 +39,14 @@ export default function RequestServiceScreen() {
   const [loading, setLoading] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
 
-  // CotizaciÃ³n (ruta + tarifa por vehÃ­culo) en una sola llamada cuando hay
+  // Cotización (ruta + tarifa por vehículo) en una sola llamada cuando hay
   // origen + destino en modo 'ride'.
   const { quote, loading: quoteLoading } = useQuote(
     pickupLocation,
     serviceType === 'ride' ? dropoffLocation : null,
   );
 
-  // Tarifa del vehÃ­culo seleccionado (para resaltar y para el payload).
+  // Tarifa del vehículo seleccionado (para resaltar y para el payload).
   const selectedFare = quote?.fares.find((f) => f.vehicle_type === selectedVehicle);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function RequestServiceScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permiso requerido', 'Necesitamos acceso a tu ubicaciÃ³n para solicitar servicios.');
+        Alert.alert('Permiso requerido', 'Necesitamos acceso a tu ubicación para solicitar servicios.');
         return;
       }
 
@@ -68,7 +68,7 @@ export default function RequestServiceScreen() {
         longitude: location.coords.longitude,
       });
     } catch (error) {
-      Alert.alert('Error', 'No se pudo obtener tu ubicaciÃ³n.');
+      Alert.alert('Error', 'No se pudo obtener tu ubicación.');
     } finally {
       setGettingLocation(false);
     }
@@ -76,7 +76,7 @@ export default function RequestServiceScreen() {
 
   const handleRequestService = async () => {
     if (!pickupLocation) {
-      Alert.alert('Error', 'Se requiere tu ubicaciÃ³n actual.');
+      Alert.alert('Error', 'Se requiere tu ubicación actual.');
       return;
     }
 
@@ -128,7 +128,7 @@ export default function RequestServiceScreen() {
 
         {/* Service Type Selection */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Â¿QuÃ© necesitas?</Text>
+          <Text style={styles.sectionTitle}>¿Qué necesitas?</Text>
           <View style={styles.serviceTypes}>
             {SERVICE_TYPES.map((type) => (
               <TouchableOpacity
@@ -158,7 +158,7 @@ export default function RequestServiceScreen() {
 
         {/* Location */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>UbicaciÃ³n</Text>
+          <Text style={styles.sectionTitle}>Ubicación</Text>
           
           <View style={styles.locationCard}>
             <Ionicons name="location" size={20} color={COLORS.primary} />
@@ -169,7 +169,7 @@ export default function RequestServiceScreen() {
                   {pickupLocation.latitude.toFixed(4)}, {pickupLocation.longitude.toFixed(4)}
                 </Text>
               ) : (
-                <Text style={styles.locationText}>Obteniendo ubicaciÃ³n...</Text>
+                <Text style={styles.locationText}>Obteniendo ubicación...</Text>
               )}
             </View>
             <TouchableOpacity onPress={getCurrentLocation} disabled={gettingLocation}>
@@ -185,7 +185,7 @@ export default function RequestServiceScreen() {
             <View style={{ zIndex: 100 }}>
               <Text style={styles.locationLabel}>Destino</Text>
               <LocationSearchInput
-                placeholder="Â¿A dÃ³nde vas? (Destino)"
+                placeholder="¿A dónde vas? (Destino)"
                 value={dropoffLocation}
                 onLocationSelect={setDropoffLocation}
                 dotColor={COLORS.secondary}
@@ -196,7 +196,7 @@ export default function RequestServiceScreen() {
           )}
         </View>
 
-        {/* Mapa con la ruta real (Directions vÃ­a proxy del backend) */}
+        {/* Mapa con la ruta real (Directions vía proxy del backend) */}
         {pickupLocation && (
           <View style={styles.section}>
             <XuveMapView
@@ -229,10 +229,10 @@ export default function RequestServiceScreen() {
           </View>
         )}
 
-        {/* SelecciÃ³n de vehÃ­culo con tarifa estimada (solo 'ride' con destino) */}
+        {/* Selección de vehículo con tarifa estimada (solo 'ride' con destino) */}
         {serviceType === 'ride' && dropoffLocation && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Elige tu vehÃ­culo</Text>
+            <Text style={styles.sectionTitle}>Elige tu vehículo</Text>
             {quoteLoading && !quote ? (
               <ActivityIndicator size="small" color={COLORS.primary} style={{ marginVertical: SPACING.md }} />
             ) : (
@@ -259,7 +259,7 @@ export default function RequestServiceScreen() {
                       </Text>
                     </View>
                     <Text style={[styles.vehiclePrice, active && styles.vehiclePriceActive]}>
-                      {fare ? `$${fare.estimated_fare.toFixed(2)}` : 'â€”'}
+                      {fare ? `$${fare.estimated_fare.toFixed(2)}` : '—'}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -286,7 +286,7 @@ export default function RequestServiceScreen() {
           <Button
             title={
               serviceType === 'ride' && selectedFare
-                ? `SOLICITAR â€¢ $${selectedFare.estimated_fare.toFixed(2)}`
+                ? `SOLICITAR • $${selectedFare.estimated_fare.toFixed(2)}`
                 : 'SOLICITAR SERVICIO'
             }
             onPress={handleRequestService}

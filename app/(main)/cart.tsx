@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -58,16 +58,16 @@ export default function CartScreen() {
 
   const handleCheckout = async () => {
     if (!deliveryAddress.trim()) {
-      Alert.alert('Error', 'Ingresa tu direcciÃ³n de entrega');
+      Alert.alert('Error', 'Ingresa tu dirección de entrega');
       return;
     }
     if (balance < total) {
-      Alert.alert('Saldo insuficiente', `Necesitas $${(total - balance).toFixed(2)} mÃ¡s. Recarga tu wallet.`);
+      Alert.alert('Saldo insuficiente', `Necesitas $${(total - balance).toFixed(2)} más. Recarga tu wallet.`);
       return;
     }
     const storeId = cart[0]?.store_id;
     if (!storeId) {
-      Alert.alert('Error', 'Carrito vacÃ­o');
+      Alert.alert('Error', 'Carrito vacío');
       return;
     }
     setLoading(true);
@@ -79,7 +79,7 @@ export default function CartScreen() {
         delivery_lat: 8.5897,
         delivery_lng: -71.1561,
       });
-      Alert.alert('Â¡Ã‰xito!', 'Pedido realizado con Ã©xito');
+      Alert.alert('¡Éxito!', 'Pedido realizado con éxito');
       clearCartGlobal();
       refreshCart();
       await refreshUser();
@@ -96,7 +96,7 @@ export default function CartScreen() {
       <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.emptyContainer}>
           <Ionicons name="bag-handle-outline" size={64} color={COLORS.textLight} />
-          <Text style={styles.emptyTitle}>Carrito vacÃ­o</Text>
+          <Text style={styles.emptyTitle}>Carrito vacío</Text>
           <Text style={styles.emptySubtext}>Agrega productos desde Xuve Market</Text>
           <Button title="IR AL MARKET" onPress={() => router.back()} style={{ marginTop: SPACING.lg }} />
         </View>
@@ -156,11 +156,11 @@ export default function CartScreen() {
         <View style={styles.addressSection}>
           <View style={styles.addressLabel}>
             <Ionicons name="location" size={16} color={COLORS.textSecondary} />
-            <Text style={styles.addressLabelText}>DirecciÃ³n de entrega</Text>
+            <Text style={styles.addressLabelText}>Dirección de entrega</Text>
           </View>
           <TextInput
             style={styles.addressInput}
-            placeholder="Av. Las AmÃ©ricas, Centro Comercial..."
+            placeholder="Av. Las Américas, Centro Comercial..."
             placeholderTextColor={COLORS.textLight}
             value={deliveryAddress}
             onChangeText={setDeliveryAddress}
@@ -192,7 +192,7 @@ export default function CartScreen() {
               </Text>
             </View>
             {balance < total && (
-              <Text style={styles.insufficientText}>Necesitas ${(total - balance).toFixed(2)} mÃ¡s</Text>
+              <Text style={styles.insufficientText}>Necesitas ${(total - balance).toFixed(2)} más</Text>
             )}
           </View>
         </View>

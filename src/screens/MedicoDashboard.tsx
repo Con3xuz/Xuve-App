@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -88,7 +88,7 @@ export default function MedicoDashboard() {
         medications: rxForm.medications.filter(m => m.name),
         pharmacy_id: rxForm.pharmacyId || undefined,
       });
-      Alert.alert('Ã‰xito', 'Receta creada y enviada');
+      Alert.alert('Éxito', 'Receta creada y enviada');
       setShowCreateModal(false);
       setRxForm({ patientName: '', patientPhone: '', patientCedula: '', diagnosis: '', notes: '', medications: [{ name: '', dosage: '', frequency: '', duration: '' }], pharmacyId: '' });
       fetchData();
@@ -118,7 +118,7 @@ export default function MedicoDashboard() {
           <Ionicons name="medical" size={24} color={TEAL} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={[styles.roleLabel, { color: TEAL }]}>MÃ‰DICO</Text>
+          <Text style={[styles.roleLabel, { color: TEAL }]}>MÉDICO</Text>
           <Text style={styles.userName}>{user?.name || 'Doctor'}</Text>
         </View>
       </View>
@@ -144,7 +144,7 @@ export default function MedicoDashboard() {
       {/* New Prescription Button */}
       <TouchableOpacity style={[styles.createBtn, { backgroundColor: TEAL }]} onPress={() => setShowCreateModal(true)}>
         <Ionicons name="add" size={20} color="#fff" />
-        <Text style={styles.createBtnText}>NUEVA RECETA MÃ‰DICA</Text>
+        <Text style={styles.createBtnText}>NUEVA RECETA MÉDICA</Text>
       </TouchableOpacity>
 
       {/* Prescriptions */}
@@ -221,19 +221,19 @@ export default function MedicoDashboard() {
 
               <View style={{ flexDirection: 'row', gap: SPACING.sm }}>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.formLabel}>TelÃ©fono</Text>
+                  <Text style={styles.formLabel}>Teléfono</Text>
                   <TextInput style={styles.formInput} placeholder="0412..." placeholderTextColor={COLORS.textLight} keyboardType="phone-pad"
                     value={rxForm.patientPhone} onChangeText={(t) => setRxForm(p => ({ ...p, patientPhone: t }))} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.formLabel}>CÃ©dula</Text>
+                  <Text style={styles.formLabel}>Cédula</Text>
                   <TextInput style={styles.formInput} placeholder="V-12345678" placeholderTextColor={COLORS.textLight}
                     value={rxForm.patientCedula} onChangeText={(t) => setRxForm(p => ({ ...p, patientCedula: t }))} />
                 </View>
               </View>
 
-              <Text style={styles.formLabel}>DiagnÃ³stico</Text>
-              <TextInput style={styles.formInput} placeholder="DiagnÃ³stico del paciente" placeholderTextColor={COLORS.textLight}
+              <Text style={styles.formLabel}>Diagnóstico</Text>
+              <TextInput style={styles.formInput} placeholder="Diagnóstico del paciente" placeholderTextColor={COLORS.textLight}
                 value={rxForm.diagnosis} onChangeText={(t) => setRxForm(p => ({ ...p, diagnosis: t }))} />
 
               {/* Medications */}
@@ -261,7 +261,7 @@ export default function MedicoDashboard() {
                     <TextInput style={[styles.medInput, { flex: 1 }]} placeholder="Frecuencia" placeholderTextColor={COLORS.textLight}
                       value={med.frequency} onChangeText={(t) => updateMedication(i, 'frequency', t)} />
                   </View>
-                  <TextInput style={styles.medInput} placeholder="DuraciÃ³n (ej: 7 dÃ­as)" placeholderTextColor={COLORS.textLight}
+                  <TextInput style={styles.medInput} placeholder="Duración (ej: 7 días)" placeholderTextColor={COLORS.textLight}
                     value={med.duration} onChangeText={(t) => updateMedication(i, 'duration', t)} />
                 </View>
               ))}

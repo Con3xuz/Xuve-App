@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -44,7 +44,7 @@ export default function ChatScreen() {
 
   const createServiceConversation = async () => {
     if (!serviceId || !serviceType || !providerId) {
-      throw new Error('No es posible crear conversaciÃ³n sin serviceType y providerId');
+      throw new Error('No es posible crear conversación sin serviceType y providerId');
     }
 
     const response = await api.post('/chat/service', {
@@ -58,7 +58,7 @@ export default function ChatScreen() {
 
   const fetchMessages = async () => {
     if (!serviceId || !serviceType) {
-      setErrorMessage('ParÃ¡metros de chat invÃ¡lidos. Revisa el servicio y vuelve a intentarlo.');
+      setErrorMessage('Parámetros de chat inválidos. Revisa el servicio y vuelve a intentarlo.');
       return;
     }
 
@@ -78,14 +78,14 @@ export default function ChatScreen() {
             return;
           }
         } catch (innerError) {
-          console.error('Error creando conversaciÃ³n de servicio:', innerError);
+          console.error('Error creando conversación de servicio:', innerError);
         }
       }
       console.error('Error fetching service messages:', error);
       setErrorMessage(
         providerId
-          ? 'No se pudo cargar el chat. Intenta de nuevo mÃ¡s tarde.'
-          : 'AÃºn no hay proveedor asignado para este servicio.'
+          ? 'No se pudo cargar el chat. Intenta de nuevo más tarde.'
+          : 'Aún no hay proveedor asignado para este servicio.'
       );
     }
   };
@@ -93,7 +93,7 @@ export default function ChatScreen() {
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
     if (!conversationId) {
-      setErrorMessage('ConversaciÃ³n no disponible. Vuelve a cargar la pantalla.');
+      setErrorMessage('Conversación no disponible. Vuelve a cargar la pantalla.');
       return;
     }
 
@@ -195,8 +195,8 @@ export default function ChatScreen() {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="chatbubble-outline" size={64} color={COLORS.textLight} />
-              <Text style={styles.emptyText}>No hay mensajes aÃºn</Text>
-              <Text style={styles.emptySubtext}>EnvÃ­a el primer mensaje</Text>
+              <Text style={styles.emptyText}>No hay mensajes aún</Text>
+              <Text style={styles.emptySubtext}>Envía el primer mensaje</Text>
             </View>
           }
         />

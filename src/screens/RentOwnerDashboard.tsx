@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -225,7 +225,7 @@ export default function RentOwnerDashboard() {
                       </Text>
                     </View>
                   </View>
-                  <Text style={styles.carPlate}>{car.plate_number} {car.year ? `â€¢ ${car.year}` : ''}</Text>
+                  <Text style={styles.carPlate}>{car.plate_number} {car.year ? `• ${car.year}` : ''}</Text>
                   <Text style={styles.carRate}>${car.daily_rate || car.daily_price}/dia</Text>
                   {(car.deposit_amount || 0) > 0 && (
                     <Text style={styles.carDeposit}>Deposito: ${car.deposit_amount}</Text>

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -198,12 +198,12 @@ export default function ServiceDetailScreen() {
           {service.status === 'accepted' && (
             <Button
               title="Ver en Mapa"
-              onPress={() => Alert.alert('PrÃ³ximamente', 'Mapa disponible en la siguiente fase')}
+              onPress={() => Alert.alert('Próximamente', 'Mapa disponible en la siguiente fase')}
               style={styles.actionButton}
             />
           )}
           <Button
-            title="ðŸ’¬ Chat del Servicio"
+            title="💬 Chat del Servicio"
             onPress={() => {
               const query = `?serviceType=${encodeURIComponent(service.service_type)}${service.driver_id ? `&providerId=${encodeURIComponent(service.driver_id)}` : ''}`;
               router.push(`/chat/${service.service_id}${query}`);
@@ -212,7 +212,7 @@ export default function ServiceDetailScreen() {
           />
           <Button
             title="Contactar Soporte"
-            onPress={() => Alert.alert('Soporte', 'Funcionalidad prÃ³ximamente')}
+            onPress={() => Alert.alert('Soporte', 'Funcionalidad próximamente')}
             style={{ ...styles.actionButton, backgroundColor: COLORS.secondary }}
           />
         </View>

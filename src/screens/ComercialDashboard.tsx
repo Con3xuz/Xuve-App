@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -67,7 +67,7 @@ export default function ComercialDashboard() {
     if (!storeForm.store_name) { Alert.alert('Error', 'Nombre de tienda requerido'); return; }
     try {
       await api.post('/comercial/register', storeForm);
-      Alert.alert('Ã‰xito', 'Â¡Tienda creada!');
+      Alert.alert('Éxito', '¡Tienda creada!');
       setShowStoreModal(false);
       fetchData();
     } catch (e: any) { Alert.alert('Error', e.response?.data?.detail || 'Error'); }
@@ -77,7 +77,7 @@ export default function ComercialDashboard() {
     if (!productForm.name || !productForm.price) { Alert.alert('Error', 'Nombre y precio requeridos'); return; }
     try {
       await api.post('/socio/comercial/products', { ...productForm, price_usd: parseFloat(productForm.price) });
-      Alert.alert('Ã‰xito', 'Â¡Producto agregado!');
+      Alert.alert('Éxito', '¡Producto agregado!');
       setShowProductModal(false);
       setProductForm({ name: '', description: '', price: '', category: 'comida', available: true });
       fetchData();
@@ -124,7 +124,7 @@ export default function ComercialDashboard() {
                 <Text style={styles.formLabel}>Nombre *</Text>
                 <TextInput style={styles.formInput} placeholder="Mi Tienda" placeholderTextColor={COLORS.textLight}
                   value={storeForm.store_name} onChangeText={(t) => setStoreForm(p => ({ ...p, store_name: t }))} />
-                <Text style={styles.formLabel}>CategorÃ­a</Text>
+                <Text style={styles.formLabel}>Categoría</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {['restaurante', 'farmacia', 'minimarket', 'supermercado', 'panaderia', 'otros'].map(cat => (
                     <TouchableOpacity key={cat} style={[styles.catChip, storeForm.category === cat && { borderColor: PURPLE, backgroundColor: PURPLE + '15' }]}
@@ -133,13 +133,13 @@ export default function ComercialDashboard() {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                <Text style={styles.formLabel}>DirecciÃ³n</Text>
-                <TextInput style={styles.formInput} placeholder="Av. Las AmÃ©ricas..." placeholderTextColor={COLORS.textLight}
+                <Text style={styles.formLabel}>Dirección</Text>
+                <TextInput style={styles.formInput} placeholder="Av. Las Américas..." placeholderTextColor={COLORS.textLight}
                   value={storeForm.address} onChangeText={(t) => setStoreForm(p => ({ ...p, address: t }))} />
-                <Text style={styles.formLabel}>TelÃ©fono</Text>
+                <Text style={styles.formLabel}>Teléfono</Text>
                 <TextInput style={styles.formInput} placeholder="0412..." placeholderTextColor={COLORS.textLight} keyboardType="phone-pad"
                   value={storeForm.phone} onChangeText={(t) => setStoreForm(p => ({ ...p, phone: t }))} />
-                <Text style={styles.formLabel}>DescripciÃ³n</Text>
+                <Text style={styles.formLabel}>Descripción</Text>
                 <TextInput style={[styles.formInput, { minHeight: 60, textAlignVertical: 'top' }]} placeholder="Describe tu negocio" multiline placeholderTextColor={COLORS.textLight}
                   value={storeForm.description} onChangeText={(t) => setStoreForm(p => ({ ...p, description: t }))} />
                 <Button title="CREAR TIENDA" onPress={handleCreateStore} style={{ marginTop: SPACING.lg, marginBottom: SPACING.xxl, backgroundColor: PURPLE }} />
@@ -213,8 +213,8 @@ export default function ComercialDashboard() {
                       <Text style={[styles.orderStatusText, { color: ost.text }]}>{ost.label}</Text>
                     </View>
                   </View>
-                  <Text style={styles.orderAddress} numberOfLines={1}>{order.delivery_address || 'DirecciÃ³n'}</Text>
-                  <Text style={styles.orderItems}>{order.items?.length || 0} productos â€¢ ${order.total?.toFixed(2) || '0.00'}</Text>
+                  <Text style={styles.orderAddress} numberOfLines={1}>{order.delivery_address || 'Dirección'}</Text>
+                  <Text style={styles.orderItems}>{order.items?.length || 0} productos • ${order.total?.toFixed(2) || '0.00'}</Text>
                   {order.status === 'pending' && (
                     <TouchableOpacity style={[styles.acceptOrderBtn, { backgroundColor: PURPLE }]} onPress={() => acceptOrder(order.order_id)}>
                       <Text style={styles.acceptOrderText}>ACEPTAR PEDIDO</Text>
@@ -260,15 +260,15 @@ export default function ComercialDashboard() {
           </View>
           <View style={styles.storeInfoRow}>
             <Ionicons name="grid" size={18} color={PURPLE} />
-            <View style={{ flex: 1 }}><Text style={styles.storeInfoLabel}>CategorÃ­a</Text><Text style={styles.storeInfoValue}>{store.category}</Text></View>
+            <View style={{ flex: 1 }}><Text style={styles.storeInfoLabel}>Categoría</Text><Text style={styles.storeInfoValue}>{store.category}</Text></View>
           </View>
           <View style={styles.storeInfoRow}>
             <Ionicons name="location" size={18} color={PURPLE} />
-            <View style={{ flex: 1 }}><Text style={styles.storeInfoLabel}>DirecciÃ³n</Text><Text style={styles.storeInfoValue}>{store.address || 'No definida'}</Text></View>
+            <View style={{ flex: 1 }}><Text style={styles.storeInfoLabel}>Dirección</Text><Text style={styles.storeInfoValue}>{store.address || 'No definida'}</Text></View>
           </View>
           <View style={styles.storeInfoRow}>
             <Ionicons name="call" size={18} color={PURPLE} />
-            <View style={{ flex: 1 }}><Text style={styles.storeInfoLabel}>TelÃ©fono</Text><Text style={styles.storeInfoValue}>{store.phone || 'No definido'}</Text></View>
+            <View style={{ flex: 1 }}><Text style={styles.storeInfoLabel}>Teléfono</Text><Text style={styles.storeInfoValue}>{store.phone || 'No definido'}</Text></View>
           </View>
         </View>
       )}
@@ -304,8 +304,8 @@ export default function ComercialDashboard() {
             <Text style={styles.formLabel}>Precio ($) *</Text>
             <TextInput style={styles.formInput} placeholder="0.00" placeholderTextColor={COLORS.textLight} keyboardType="numeric"
               value={productForm.price} onChangeText={(t) => setProductForm(p => ({ ...p, price: t }))} />
-            <Text style={styles.formLabel}>DescripciÃ³n</Text>
-            <TextInput style={[styles.formInput, { minHeight: 60, textAlignVertical: 'top' }]} placeholder="DescripciÃ³n..." multiline placeholderTextColor={COLORS.textLight}
+            <Text style={styles.formLabel}>Descripción</Text>
+            <TextInput style={[styles.formInput, { minHeight: 60, textAlignVertical: 'top' }]} placeholder="Descripción..." multiline placeholderTextColor={COLORS.textLight}
               value={productForm.description} onChangeText={(t) => setProductForm(p => ({ ...p, description: t }))} />
             <Button title="AGREGAR PRODUCTO" onPress={handleAddProduct} style={{ marginTop: SPACING.lg, marginBottom: SPACING.xxl, backgroundColor: PURPLE }} />
           </View>

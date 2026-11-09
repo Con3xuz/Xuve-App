@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -102,7 +102,7 @@ export default function NotificationsScreen() {
           <View style={styles.emptyContainer}>
             <Ionicons name="notifications-off-outline" size={64} color={COLORS.textLight} />
             <Text style={styles.emptyText}>Sin notificaciones</Text>
-            <Text style={styles.emptySubtext}>Tus avisos aparecerÃ¡n aquÃ­</Text>
+            <Text style={styles.emptySubtext}>Tus avisos aparecerán aquí</Text>
           </View>
         ) : (
           <View style={styles.notifList}>

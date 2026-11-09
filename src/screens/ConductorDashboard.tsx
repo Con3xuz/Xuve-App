@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -84,14 +84,14 @@ export default function ConductorDashboard() {
             await api.post('/subscription/activate', { role: 'socio_conductor' });
             setHasSubscription(true);
           } catch (subError: any) {
-            Alert.alert('SuscripciÃ³n requerida', subError.response?.data?.detail || 'Se requiere $1.00 USD diario para conectarte. Recarga tu wallet.');
+            Alert.alert('Suscripción requerida', subError.response?.data?.detail || 'Se requiere $1.00 USD diario para conectarte. Recarga tu wallet.');
             setTogglingOnline(false);
             return;
           }
         }
         await api.post('/socio/conductor/go-online?lat=8.5897&lng=-71.1561');
         setIsOnline(true);
-        Alert.alert('En lÃ­nea', 'Â¡EstÃ¡s recibiendo solicitudes!');
+        Alert.alert('En línea', '¡Estás recibiendo solicitudes!');
       } else {
         await api.post('/socio/conductor/go-offline');
         setIsOnline(false);
@@ -107,7 +107,7 @@ export default function ConductorDashboard() {
   const acceptRequest = async (serviceId: string) => {
     try {
       await api.post(`/services/${serviceId}/accept`);
-      Alert.alert('Aceptado', 'Â¡Viaje aceptado!');
+      Alert.alert('Aceptado', '¡Viaje aceptado!');
       fetchPendingRequests();
     } catch (error: any) {
       Alert.alert('Error', error.response?.data?.detail || 'Error al aceptar');
@@ -142,7 +142,7 @@ export default function ConductorDashboard() {
         </View>
         <View style={styles.onlineToggle}>
           <Text style={[styles.onlineLabel, { color: isOnline ? COLORS.primary : COLORS.accent }]}>
-            {isOnline ? 'EN LÃNEA' : 'DESCONECTADO'}
+            {isOnline ? 'EN LNEA' : 'DESCONECTADO'}
           </Text>
           <Switch
             value={isOnline}
@@ -158,7 +158,7 @@ export default function ConductorDashboard() {
       <View style={styles.mapPlaceholder}>
         <View style={[styles.statusDot, { backgroundColor: isOnline ? COLORS.primary : COLORS.accent }]} />
         <Ionicons name="navigate-circle" size={64} color={isOnline ? COLORS.primary + '50' : COLORS.textLight + '30'} />
-        <Text style={styles.mapText}>{isOnline ? 'Buscando pasajeros...' : 'ConÃ©ctate para recibir viajes'}</Text>
+        <Text style={styles.mapText}>{isOnline ? 'Buscando pasajeros...' : 'Conéctate para recibir viajes'}</Text>
       </View>
 
       {/* Subscription Banner */}
@@ -166,8 +166,8 @@ export default function ConductorDashboard() {
         <View style={styles.subscriptionBanner}>
           <Ionicons name="flash" size={20} color={COLORS.warning} />
           <View style={{ flex: 1 }}>
-            <Text style={styles.subBannerTitle}>SuscripciÃ³n Diaria</Text>
-            <Text style={styles.subBannerText}>$1.00 USD/dÃ­a para recibir solicitudes</Text>
+            <Text style={styles.subBannerTitle}>Suscripción Diaria</Text>
+            <Text style={styles.subBannerText}>$1.00 USD/día para recibir solicitudes</Text>
           </View>
           <TouchableOpacity style={styles.subActivateBtn} onPress={toggleOnline}>
             <Text style={styles.subActivateText}>ACTIVAR</Text>
@@ -199,7 +199,7 @@ export default function ConductorDashboard() {
       {pendingRequests.length === 0 ? (
         <View style={styles.emptyBox}>
           <Ionicons name="car-outline" size={40} color={COLORS.textLight} />
-          <Text style={styles.emptyText}>{isOnline ? 'Esperando solicitudes...' : 'ConÃ©ctate para ver solicitudes'}</Text>
+          <Text style={styles.emptyText}>{isOnline ? 'Esperando solicitudes...' : 'Conéctate para ver solicitudes'}</Text>
         </View>
       ) : (
         pendingRequests.map((req: any) => (

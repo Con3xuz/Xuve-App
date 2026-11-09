@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -38,10 +38,10 @@ export default function ActiveRideScreen() {
       dropoff_lng: -71.1496,
       fare: 8.50,
       vehicle_type: 'Taxi',
-      payment_method: 'Pago MÃ³vil',
+      payment_method: 'Pago Móvil',
     });
     setDriver({
-      name: 'Carlos MÃ©ndez',
+      name: 'Carlos Méndez',
       phone: '0412-555-1234',
       rating: 4.9,
       trips_completed: 847,
@@ -51,9 +51,9 @@ export default function ActiveRideScreen() {
   }, []);
 
   const handleCancel = () => {
-    Alert.alert('Cancelar Viaje', 'Â¿EstÃ¡s seguro?', [
+    Alert.alert('Cancelar Viaje', '¿Estás seguro?', [
       { text: 'No', style: 'cancel' },
-      { text: 'SÃ­, cancelar', style: 'destructive', onPress: () => {
+      { text: 'Sí, cancelar', style: 'destructive', onPress: () => {
         Alert.alert('Viaje cancelado');
         router.back();
       }},
@@ -63,21 +63,21 @@ export default function ActiveRideScreen() {
   const sendSOS = async () => {
     try {
       await api.post(`/sos?lat=8.5897&lng=-71.1561&service_id=${serviceId}`);
-      Alert.alert('SOS', 'Â¡Alerta de emergencia enviada!');
+      Alert.alert('SOS', '¡Alerta de emergencia enviada!');
     } catch { Alert.alert('SOS enviado'); }
   };
 
   const STATUS_STEPS = [
     { id: 'searching', label: 'Buscando conductor', icon: 'search' },
     { id: 'accepted', label: 'Conductor en camino', icon: 'car' },
-    { id: 'arrived', label: 'Conductor llegÃ³', icon: 'flag' },
+    { id: 'arrived', label: 'Conductor llegó', icon: 'flag' },
     { id: 'in_progress', label: 'En viaje', icon: 'navigate' },
     { id: 'completed', label: 'Completado', icon: 'checkmark-circle' },
   ];
 
   const currentStep = STATUS_STEPS.findIndex(s => s.id === status);
 
-  // Coordenadas del viaje -> ruta real (Directions vÃ­a proxy del backend).
+  // Coordenadas del viaje -> ruta real (Directions vía proxy del backend).
   const origin = service?.pickup_lat != null
     ? { latitude: service.pickup_lat, longitude: service.pickup_lng, name: service.pickup_address }
     : null;
@@ -111,7 +111,7 @@ export default function ActiveRideScreen() {
             {route && (
               <View style={styles.mapEta}>
                 <Ionicons name="navigate" size={14} color={COLORS.primary} />
-                <Text style={styles.mapEtaText}>{route.distance_text} â€¢ {route.duration_text}</Text>
+                <Text style={styles.mapEtaText}>{route.distance_text} • {route.duration_text}</Text>
               </View>
             )}
           </View>
@@ -148,7 +148,7 @@ export default function ActiveRideScreen() {
               <Text style={styles.routeAddress}>{service.dropoff_address}</Text>
             </View>
             <View style={styles.fareRow}>
-              <Text style={styles.fareLabel}>{service.vehicle_type} â€¢ {service.payment_method}</Text>
+              <Text style={styles.fareLabel}>{service.vehicle_type} • {service.payment_method}</Text>
               <Text style={styles.fareAmount}>${service.fare?.toFixed(2)}</Text>
             </View>
           </View>
@@ -166,7 +166,7 @@ export default function ActiveRideScreen() {
                 <View style={styles.driverMeta}>
                   <Ionicons name="star" size={14} color="#F59E0B" />
                   <Text style={styles.driverRating}>{driver.rating}</Text>
-                  <Text style={styles.driverTrips}>â€¢ {driver.trips_completed} viajes</Text>
+                  <Text style={styles.driverTrips}>• {driver.trips_completed} viajes</Text>
                 </View>
               </View>
             </View>

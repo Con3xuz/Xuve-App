@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -73,7 +73,7 @@ export default function WalletScreen() {
   const handleRecharge = async () => {
     const amountBs = parseFloat(rechargeAmount);
     if (!amountBs || amountBs <= 0) {
-      Alert.alert('Error', 'Ingresa un monto vÃ¡lido');
+      Alert.alert('Error', 'Ingresa un monto válido');
       return;
     }
     if (!rechargeRef.trim()) {
@@ -87,7 +87,7 @@ export default function WalletScreen() {
         payment_method: rechargeMethod,
         reference: rechargeRef.trim(),
       });
-      Alert.alert('Ã‰xito', `Recarga de $${(amountBs / exchangeRate).toFixed(2)} USD procesada`);
+      Alert.alert('Éxito', `Recarga de $${(amountBs / exchangeRate).toFixed(2)} USD procesada`);
       setShowRechargeModal(false);
       setRechargeAmount('');
       setRechargeRef('');
@@ -102,7 +102,7 @@ export default function WalletScreen() {
   const handleWithdraw = async () => {
     const amountUsd = parseFloat(withdrawAmount);
     if (!amountUsd || amountUsd <= 0) {
-      Alert.alert('Error', 'Ingresa un monto vÃ¡lido');
+      Alert.alert('Error', 'Ingresa un monto válido');
       return;
     }
     if (amountUsd > availableBalance) {
@@ -117,7 +117,7 @@ export default function WalletScreen() {
         phone: withdrawPhone,
         cedula: withdrawCedula,
       });
-      Alert.alert('Ã‰xito', 'Solicitud de retiro enviada');
+      Alert.alert('Éxito', 'Solicitud de retiro enviada');
       setShowWithdrawModal(false);
       setWithdrawAmount('');
       setWithdrawBank('');
@@ -186,12 +186,12 @@ export default function WalletScreen() {
             <Text style={styles.balanceAmount}>${availableBalance.toFixed(2)}</Text>
             <Text style={styles.balanceCurrency}>USD</Text>
           </View>
-          <Text style={styles.balanceBs}>â‰ˆ Bs {(availableBalance * exchangeRate).toFixed(2)}</Text>
+          <Text style={styles.balanceBs}>≈ Bs {(availableBalance * exchangeRate).toFixed(2)}</Text>
 
           {walletHeld > 0 && (
             <View style={styles.heldRow}>
               <Ionicons name="lock-closed" size={12} color={COLORS.warning} />
-              <Text style={styles.heldText}>${walletHeld.toFixed(2)} en garantÃ­a</Text>
+              <Text style={styles.heldText}>${walletHeld.toFixed(2)} en garantía</Text>
             </View>
           )}
 
@@ -238,14 +238,14 @@ export default function WalletScreen() {
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.modalLabel}>MÃ©todo de pago</Text>
+            <Text style={styles.modalLabel}>Método de pago</Text>
             <View style={styles.methodRow}>
               <TouchableOpacity
                 style={[styles.methodBtn, rechargeMethod === 'pago_movil' && styles.methodBtnActive]}
                 onPress={() => setRechargeMethod('pago_movil')}
               >
                 <Ionicons name="phone-portrait" size={24} color={rechargeMethod === 'pago_movil' ? COLORS.primary : COLORS.textSecondary} />
-                <Text style={[styles.methodBtnText, rechargeMethod === 'pago_movil' && { color: COLORS.primary }]}>Pago MÃ³vil</Text>
+                <Text style={[styles.methodBtnText, rechargeMethod === 'pago_movil' && { color: COLORS.primary }]}>Pago Móvil</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.methodBtn, rechargeMethod === 'binance_pay' && styles.methodBtnActive]}
@@ -266,13 +266,13 @@ export default function WalletScreen() {
               placeholderTextColor={COLORS.textLight}
             />
             {rechargeAmount ? (
-              <Text style={styles.conversionText}>â‰ˆ ${(parseFloat(rechargeAmount) / exchangeRate).toFixed(2)} USD</Text>
+              <Text style={styles.conversionText}>≈ ${(parseFloat(rechargeAmount) / exchangeRate).toFixed(2)} USD</Text>
             ) : null}
 
             <Text style={styles.modalLabel}>Referencia de pago</Text>
             <TextInput
               style={styles.modalInput}
-              placeholder="Ãšltimos 6 dÃ­gitos"
+              placeholder="Últimos 6 dígitos"
               value={rechargeRef}
               onChangeText={setRechargeRef}
               keyboardType="numeric"
@@ -289,7 +289,7 @@ export default function WalletScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Retirar a Pago MÃ³vil</Text>
+              <Text style={styles.modalTitle}>Retirar a Pago Móvil</Text>
               <TouchableOpacity onPress={() => setShowWithdrawModal(false)}>
                 <Ionicons name="close" size={24} color={COLORS.text} />
               </TouchableOpacity>
@@ -305,7 +305,7 @@ export default function WalletScreen() {
               placeholderTextColor={COLORS.textLight}
             />
             {withdrawAmount ? (
-              <Text style={styles.conversionText}>RecibirÃ¡s â‰ˆ Bs {(parseFloat(withdrawAmount) * exchangeRate).toFixed(2)}</Text>
+              <Text style={styles.conversionText}>Recibirás ≈ Bs {(parseFloat(withdrawAmount) * exchangeRate).toFixed(2)}</Text>
             ) : null}
 
             <Text style={styles.modalLabel}>Banco</Text>
@@ -317,7 +317,7 @@ export default function WalletScreen() {
               placeholderTextColor={COLORS.textLight}
             />
 
-            <Text style={styles.modalLabel}>TelÃ©fono</Text>
+            <Text style={styles.modalLabel}>Teléfono</Text>
             <TextInput
               style={styles.modalInput}
               placeholder="0412..."
@@ -327,7 +327,7 @@ export default function WalletScreen() {
               placeholderTextColor={COLORS.textLight}
             />
 
-            <Text style={styles.modalLabel}>CÃ©dula</Text>
+            <Text style={styles.modalLabel}>Cédula</Text>
             <TextInput
               style={styles.modalInput}
               placeholder="V-12345678"

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -70,7 +70,7 @@ export default function ChatHubScreen() {
         <View style={styles.emptyContainer}>
           <Ionicons name="chatbubbles-outline" size={64} color={COLORS.textLight} />
           <Text style={styles.emptyTitle}>Sin chats activos</Text>
-          <Text style={styles.emptySubtitle}>Solicita un servicio para iniciar una conversaciÃ³n con tu proveedor.</Text>
+          <Text style={styles.emptySubtitle}>Solicita un servicio para iniciar una conversación con tu proveedor.</Text>
         </View>
       ) : (
         <FlatList

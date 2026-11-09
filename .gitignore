@@ -1,15 +1,26 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+# =====================================================================
+# Xuve-App - .gitignore
+# =====================================================================
 
-# dependencies
+# Dependencies
 node_modules/
+.pnpm-store/
+.yarn/
 
-# Expo
+# Expo & Metro Cache
 .expo/
+.metro-cache/
+.metro-health-check*
 dist/
 web-build/
 expo-env.d.ts
 
-# Native
+# Native Builds (Android / iOS)
+android/app/build/
+android/.gradle/
+android/build/
+ios/build/
+ios/Pods/
 .kotlin/
 *.orig.*
 *.jks
@@ -18,22 +29,21 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
-# Metro
-.metro-health-check*
-
-# debug
+# Debug & logs
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+*.log
 
-# macOS
+# OS & Temp
 .DS_Store
+Thumbs.db
 *.pem
 
-# local env files
+# Environment & secrets
+.env
 .env*.local
 
-# typescript
+# Typescript
 *.tsbuildinfo
-
-app-example
+app-example/

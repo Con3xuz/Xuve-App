@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -91,7 +91,7 @@ export default function ProductManagerScreen() {
   const handleDelete = (productId: string, productName: string) => {
     Alert.alert(
       'Eliminar Producto',
-      `Â¿Eliminar "${productName}"?`,
+      `¿Eliminar "${productName}"?`,
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -129,8 +129,8 @@ export default function ProductManagerScreen() {
     const actionText = action === 'activate' ? 'activar' : action === 'deactivate' ? 'desactivar' : 'eliminar';
 
     Alert.alert(
-      'AcciÃ³n Masiva',
-      `Â¿${actionText.charAt(0).toUpperCase() + actionText.slice(1)} ${count} productos?`,
+      'Acción Masiva',
+      `¿${actionText.charAt(0).toUpperCase() + actionText.slice(1)} ${count} productos?`,
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -146,12 +146,12 @@ export default function ProductManagerScreen() {
                   is_available: action === 'activate'
                 });
               }
-              Alert.alert('Ã‰xito', `${count} productos ${actionText === 'eliminar' ? 'eliminados' : (action === 'activate' ? 'activados' : 'desactivados')}`);
+              Alert.alert('Éxito', `${count} productos ${actionText === 'eliminar' ? 'eliminados' : (action === 'activate' ? 'activados' : 'desactivados')}`);
               setSelectedIds([]);
               setSelectMode(false);
               fetchProducts();
               fetchStats();
-            } catch { Alert.alert('Error', 'Error en la acciÃ³n masiva'); }
+            } catch { Alert.alert('Error', 'Error en la acción masiva'); }
           }
         }
       ]
@@ -322,7 +322,7 @@ export default function ProductManagerScreen() {
               <Ionicons name="chevron-back" size={18} color={page === 1 ? COLORS.textLight : COLORS.text} />
             </TouchableOpacity>
             <Text style={styles.pageText}>
-              PÃ¡g {page} de {pagination.total_pages} ({pagination.total} prod.)
+              Pág {page} de {pagination.total_pages} ({pagination.total} prod.)
             </Text>
             <TouchableOpacity
               style={[styles.pageBtn, page === pagination.total_pages && styles.pageBtnDisabled]}
@@ -487,7 +487,7 @@ const ImportModal = ({ visible, onClose, onImportDone, onDownloadTemplate }: any
       setResult(res.data);
       onImportDone();
     } catch (e: any) {
-      Alert.alert('Error', e.response?.data?.detail || 'Error en la importaciÃ³n');
+      Alert.alert('Error', e.response?.data?.detail || 'Error en la importación');
     } finally {
       setImporting(false);
     }
@@ -521,7 +521,7 @@ const ImportModal = ({ visible, onClose, onImportDone, onDownloadTemplate }: any
               <Text style={styles.instructionText}>1. Descarga la plantilla de ejemplo</Text>
               <Text style={styles.instructionText}>2. Completa los datos de tus productos</Text>
               <Text style={styles.instructionText}>3. Guarda el archivo como CSV</Text>
-              <Text style={styles.instructionText}>4. SÃºbelo aquÃ­</Text>
+              <Text style={styles.instructionText}>4. Súbelo aquí</Text>
             </View>
 
             {/* Download Template */}
@@ -557,14 +557,14 @@ const ImportModal = ({ visible, onClose, onImportDone, onDownloadTemplate }: any
               />
               <View style={{ flex: 1, marginLeft: SPACING.sm }}>
                 <Text style={styles.toggleLabel}>Actualizar existentes</Text>
-                <Text style={styles.toggleDesc}>Si un producto ya existe (mismo SKU o nombre), se actualizarÃ¡</Text>
+                <Text style={styles.toggleDesc}>Si un producto ya existe (mismo SKU o nombre), se actualizará</Text>
               </View>
             </View>
 
             {/* Import Result */}
             {result && (
               <View style={[styles.resultBox, result.failed > 0 ? { borderColor: '#F59E0B' } : { borderColor: COLORS.primary }]}>
-                <Text style={styles.resultTitle}>Resultado de importaciÃ³n:</Text>
+                <Text style={styles.resultTitle}>Resultado de importación:</Text>
                 <View style={styles.resultGrid}>
                   <View style={styles.resultItem}>
                     <Text style={[styles.resultValue, { color: COLORS.primary }]}>{result.successful}</Text>
@@ -586,7 +586,7 @@ const ImportModal = ({ visible, onClose, onImportDone, onDownloadTemplate }: any
                       <Text key={i} style={styles.resultErrorText}>Fila {err.row}: {err.error}</Text>
                     ))}
                     {result.errors.length > 5 && (
-                      <Text style={styles.resultErrorMore}>...y {result.errors.length - 5} mÃ¡s</Text>
+                      <Text style={styles.resultErrorMore}>...y {result.errors.length - 5} más</Text>
                     )}
                   </View>
                 )}
@@ -659,7 +659,7 @@ const ProductFormModal = ({ visible, onClose, product, onSaved }: any) => {
 
   const handleSave = async () => {
     if (!form.name || !form.price || !form.category) {
-      Alert.alert('Error', 'Nombre, precio y categorÃ­a son requeridos');
+      Alert.alert('Error', 'Nombre, precio y categoría son requeridos');
       return;
     }
     setSaving(true);
@@ -673,10 +673,10 @@ const ProductFormModal = ({ visible, onClose, product, onSaved }: any) => {
       };
       if (product) {
         await api.put(`/store/products/${product.product_id}`, data);
-        Alert.alert('Ã‰xito', 'Producto actualizado');
+        Alert.alert('Éxito', 'Producto actualizado');
       } else {
         await api.post('/store/products', data);
-        Alert.alert('Ã‰xito', 'Producto creado');
+        Alert.alert('Éxito', 'Producto creado');
       }
       onSaved();
     } catch (e: any) {
@@ -697,8 +697,8 @@ const ProductFormModal = ({ visible, onClose, product, onSaved }: any) => {
                 <TouchableOpacity onPress={onClose}><Ionicons name="close" size={24} color={COLORS.text} /></TouchableOpacity>
               </View>
 
-              <FormField label="Nombre *" value={form.name} onChangeText={(t: string) => setForm(p => ({ ...p, name: t }))} placeholder="Ej: AcetaminofÃ©n 500mg" />
-              <FormField label="DescripciÃ³n" value={form.description} onChangeText={(t: string) => setForm(p => ({ ...p, description: t }))} placeholder="DescripciÃ³n del producto..." multiline />
+              <FormField label="Nombre *" value={form.name} onChangeText={(t: string) => setForm(p => ({ ...p, name: t }))} placeholder="Ej: Acetaminofén 500mg" />
+              <FormField label="Descripción" value={form.description} onChangeText={(t: string) => setForm(p => ({ ...p, description: t }))} placeholder="Descripción del producto..." multiline />
 
               <View style={styles.formRow}>
                 <View style={{ flex: 1 }}>
@@ -711,10 +711,10 @@ const ProductFormModal = ({ visible, onClose, product, onSaved }: any) => {
 
               <View style={styles.formRow}>
                 <View style={{ flex: 1 }}>
-                  <FormField label="CategorÃ­a *" value={form.category} onChangeText={(t: string) => setForm(p => ({ ...p, category: t }))} placeholder="Ej: Medicamentos" />
+                  <FormField label="Categoría *" value={form.category} onChangeText={(t: string) => setForm(p => ({ ...p, category: t }))} placeholder="Ej: Medicamentos" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <FormField label="SubcategorÃ­a" value={form.subcategory} onChangeText={(t: string) => setForm(p => ({ ...p, subcategory: t }))} placeholder="Ej: Sin receta" />
+                  <FormField label="Subcategoría" value={form.subcategory} onChangeText={(t: string) => setForm(p => ({ ...p, subcategory: t }))} placeholder="Ej: Sin receta" />
                 </View>
               </View>
 
@@ -723,7 +723,7 @@ const ProductFormModal = ({ visible, onClose, product, onSaved }: any) => {
                   <FormField label="SKU" value={form.sku} onChangeText={(t: string) => setForm(p => ({ ...p, sku: t }))} placeholder="MED001" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <FormField label="CÃ³digo de barras" value={form.barcode} onChangeText={(t: string) => setForm(p => ({ ...p, barcode: t }))} placeholder="7501234567890" />
+                  <FormField label="Código de barras" value={form.barcode} onChangeText={(t: string) => setForm(p => ({ ...p, barcode: t }))} placeholder="7501234567890" />
                 </View>
               </View>
 
@@ -790,7 +790,7 @@ const ImageManagerModal = ({ visible, onClose, product, onUpdated }: any) => {
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permiso requerido', 'Necesitamos acceso a tu galerÃ­a para subir fotos');
+        Alert.alert('Permiso requerido', 'Necesitamos acceso a tu galería para subir fotos');
         return;
       }
 
@@ -813,7 +813,7 @@ const ImageManagerModal = ({ visible, onClose, product, onUpdated }: any) => {
     try {
       const { status } = await ImagePicker.requestCameraPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permiso requerido', 'Necesitamos acceso a la cÃ¡mara');
+        Alert.alert('Permiso requerido', 'Necesitamos acceso a la cámara');
         return;
       }
 
@@ -860,7 +860,7 @@ const ImageManagerModal = ({ visible, onClose, product, onUpdated }: any) => {
       const prodRes = await api.get(`/store/products/${productData.product_id}`);
       setProductData(prodRes.data);
       onUpdated();
-      Alert.alert('Ã‰xito', 'Imagen agregada al producto');
+      Alert.alert('Éxito', 'Imagen agregada al producto');
     } catch (e: any) {
       Alert.alert('Error', e.response?.data?.detail || 'No se pudo subir la imagen');
     } finally {
@@ -870,7 +870,7 @@ const ImageManagerModal = ({ visible, onClose, product, onUpdated }: any) => {
 
   const deleteImage = (imageId: string) => {
     if (!productData) return;
-    Alert.alert('Eliminar imagen', 'Â¿Eliminar esta imagen?', [
+    Alert.alert('Eliminar imagen', '¿Eliminar esta imagen?', [
       { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Eliminar', style: 'destructive',
@@ -908,7 +908,7 @@ const ImageManagerModal = ({ visible, onClose, product, onUpdated }: any) => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.modalHeader}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.modalTitle}>ImÃ¡genes</Text>
+                <Text style={styles.modalTitle}>Imágenes</Text>
                 <Text style={styles.modalSubtitle} numberOfLines={1}>{productData.name}</Text>
               </View>
               <TouchableOpacity onPress={onClose}><Ionicons name="close" size={24} color={COLORS.text} /></TouchableOpacity>
@@ -944,7 +944,7 @@ const ImageManagerModal = ({ visible, onClose, product, onUpdated }: any) => {
             ) : (
               <View style={styles.noImagesBox}>
                 <Ionicons name="image-outline" size={48} color={COLORS.textLight} />
-                <Text style={styles.noImagesText}>Este producto no tiene imÃ¡genes</Text>
+                <Text style={styles.noImagesText}>Este producto no tiene imágenes</Text>
               </View>
             )}
 
@@ -953,11 +953,11 @@ const ImageManagerModal = ({ visible, onClose, product, onUpdated }: any) => {
             <View style={styles.addImageRow}>
               <TouchableOpacity style={styles.addImageBtn} onPress={pickImage} disabled={uploading}>
                 <Ionicons name="images" size={24} color={PURPLE} />
-                <Text style={styles.addImageBtnText}>GalerÃ­a</Text>
+                <Text style={styles.addImageBtnText}>Galería</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.addImageBtn} onPress={takePhoto} disabled={uploading}>
                 <Ionicons name="camera" size={24} color={COLORS.primary} />
-                <Text style={styles.addImageBtnText}>CÃ¡mara</Text>
+                <Text style={styles.addImageBtnText}>Cámara</Text>
               </TouchableOpacity>
             </View>
 
