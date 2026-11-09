@@ -5,7 +5,7 @@
  * Así la API key facturable (Places, Directions, Distance Matrix, Geocoding) vive
  * SOLO en el servidor. El render del mapa usa otra llave distinta vía Maps SDK.
  */
-import api from './api';
+import { geoApi } from '../api';
 
 export interface GeoPrediction {
   place_id: string;
@@ -70,19 +70,18 @@ export async function autocompletePlaces(
     params.lat = bias.latitude;
     params.lng = bias.longitude;
   }
-  const { data } = await api.get('/geo/autocomplete', { params });
+  const data = await geoApi.autocomplete(params);
   return data.predictions ?? [];
 }
 
 /** Resuelve un place_id (de autocompletePlaces) a coordenadas + dirección. */
 export async function getPlaceDetails(placeId: string): Promise<GeoPlace> {
-  const { data } = await api.get(`/geo/place/${placeId}`);
-  return data;
+  return geoApi.placeDetails(placeId);
 }
 
 /** Geocoding directo: texto -> coordenadas. */
 export async function geocodeAddress(address: string): Promise<GeoPlace[]> {
-  const { data } = await api.get('/geo/geocode', { params: { address } });
+  const data = await geoApi.geocode({ address });
   return (data.results ?? []).map((r: any) => ({
     place_id: '',
     name: r.address,
@@ -94,13 +93,10 @@ export async function geocodeAddress(address: string): Promise<GeoPlace[]> {
 
 /** Ruta entre dos puntos: distancia, duración y polyline listo para el mapa. */
 export async function getDirections(origin: LatLng, destination: LatLng): Promise<GeoRoute> {
-  const { data } = await api.get('/geo/directions', {
-    params: {
-      origin: `${origin.latitude},${origin.longitude}`,
-      destination: `${destination.latitude},${destination.longitude}`,
-    },
+  return geoApi.directions({
+    origin: `${origin.latitude},${origin.longitude}`,
+    destination: `${destination.latitude},${destination.longitude}`,
   });
-  return data;
 }
 
 /**
@@ -112,12 +108,9 @@ export async function getQuote(
   destination: LatLng,
   vehicleTypes?: string[],
 ): Promise<RouteQuote> {
-  const { data } = await api.get('/geo/quote', {
-    params: {
-      origin: `${origin.latitude},${origin.longitude}`,
-      destination: `${destination.latitude},${destination.longitude}`,
-      ...(vehicleTypes ? { vehicle_types: vehicleTypes.join(',') } : {}),
-    },
+  return geoApi.quote({
+    origin: `${origin.latitude},${origin.longitude}`,
+    destination: `${destination.latitude},${destination.longitude}`,
+    ...(vehicleTypes ? { vehicle_types: vehicleTypes.join(',') } : {}),
   });
-  return data;
 }

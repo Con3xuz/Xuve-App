@@ -14,6 +14,7 @@ export const COLORS = {
   // Backgrounds - Dark Mode Only
   background: '#050505',      // Near black
   surface: '#121212',         // Dark surface
+  card: '#121212',            // Card surface alias
   surfaceHighlight: '#1A1A1A', // Slightly lighter
   surfaceVariant: '#0D0D0D',
 

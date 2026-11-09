@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button } from '../../src/components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
-import api from '../../src/lib/api';
+import api from '../../src/api';
 
 const ROLE_INFO: Record<string, { label: string; color: string; icon: string }> = {
   user: { label: 'Usuario', color: COLORS.primary, icon: 'person' },

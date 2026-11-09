@@ -6,7 +6,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import api from '../../../lib/api';
+import { servicesApi } from '../../../api';
 import { validateRideRequest } from '../types';
 import type { RideRequest, RideRequestPayload, Service } from '../types';
 
@@ -59,8 +59,7 @@ export function useRequestRide(): UseRequestRideReturn {
         destination_address: request.destination.name,
         payment_method:      request.paymentMethod,
       };
-      const { data } = await api.post<Service>('/services/request', payload);
-      return data;
+      return servicesApi.requestService<Service>(payload);
     },
     onSuccess: () => {
       // Invalida el caché de servicios activos para que active-ride los recargue

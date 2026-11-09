@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../stores/authStore';
 import { Card } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../constants/theme';
-import api from '../lib/api';
+import { exchangeRateApi, prescriptionsApi } from '../api';
 import XuveMapView from '../components/XuveMapView';
 import LocationSearchInput from '../components/LocationSearchInput';
 
@@ -35,7 +35,7 @@ const VEHICLE_OPTIONS = [
 
 const PAYMENT_OPTIONS = [
   { id: 'efectivo', label: 'Efectivo', icon: 'cash' },
-  { id: 'pago_movil', label: 'Pago Móvil', icon: 'phone-portrait' },
+  { id: 'pago_movil', label: 'Pago MÃ³vil', icon: 'phone-portrait' },
   { id: 'wallet', label: 'Wallet Xuve', icon: 'wallet' },
 ];
 
@@ -58,8 +58,8 @@ export default function ClienteDashboard() {
 
   const fetchExchangeRate = async () => {
     try {
-      const response = await api.get('/exchange-rate');
-      setExchangeRate(response.data.usd_to_bs);
+      const data = await exchangeRateApi.getExchangeRate();
+      setExchangeRate(data.usd_to_bs);
     } catch (error) {
       console.error('Error fetching exchange rate:', error);
     }
@@ -68,8 +68,8 @@ export default function ClienteDashboard() {
   const fetchPrescriptions = async () => {
     setLoadingRx(true);
     try {
-      const res = await api.get('/prescriptions/patient/my-prescriptions');
-      setPrescriptions(res.data.prescriptions || []);
+      const res = await prescriptionsApi.getPatientPrescriptions();
+      setPrescriptions(res.prescriptions || []);
     } catch (err) {
       console.log('No prescriptions yet');
     } finally {
@@ -130,7 +130,7 @@ export default function ClienteDashboard() {
         showUserLocation
         style={styles.mapView}
       />
-      <Text style={styles.sectionLabel}>SELECCIONA TU VEHÍCULO</Text>
+      <Text style={styles.sectionLabel}>SELECCIONA TU VEHÃCULO</Text>
       <View style={styles.optionsRow}>
         {VEHICLE_OPTIONS.map((v) => (
           <TouchableOpacity key={v.id} style={[styles.optionCard, selectedVehicle === v.id && styles.optionCardActive]} onPress={() => setSelectedVehicle(v.id)}>
@@ -140,7 +140,7 @@ export default function ClienteDashboard() {
           </TouchableOpacity>
         ))}
       </View>
-      <Text style={styles.sectionLabel}>¿CÓMO VAS A PAGAR?</Text>
+      <Text style={styles.sectionLabel}>Â¿CÃ“MO VAS A PAGAR?</Text>
       <View style={styles.optionsRow}>
         {PAYMENT_OPTIONS.map((p) => (
           <TouchableOpacity key={p.id} style={[styles.optionCard, selectedPayment === p.id && styles.optionCardCyan]} onPress={() => setSelectedPayment(p.id)}>
@@ -174,14 +174,14 @@ export default function ClienteDashboard() {
   const renderSaludTab = () => (
     <View style={styles.tabContent}>
       <Text style={styles.tabTitle}>Salud</Text>
-      <Text style={styles.tabSubtitle}>Recetas médicas y medicamentos a domicilio</Text>
+      <Text style={styles.tabSubtitle}>Recetas mÃ©dicas y medicamentos a domicilio</Text>
       {loadingRx ? (
         <View style={styles.emptyContainer}><Text style={styles.emptyText}>Cargando...</Text></View>
       ) : prescriptions.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="heart" size={48} color={COLORS.textLight} />
           <Text style={styles.emptyText}>No tienes recetas</Text>
-          <Text style={styles.emptySubtext}>Cuando un médico te envíe una receta, aparecerá aquí</Text>
+          <Text style={styles.emptySubtext}>Cuando un mÃ©dico te envÃ­e una receta, aparecerÃ¡ aquÃ­</Text>
         </View>
       ) : (
         prescriptions.map((rx: any) => (
@@ -230,7 +230,7 @@ export default function ClienteDashboard() {
       </TouchableOpacity>
       <View style={[styles.serviceLink, { opacity: 0.6 }]}>
         <View style={[styles.serviceLinkIcon, { backgroundColor: COLORS.warning + '30' }]}><Ionicons name="flash" size={24} color={COLORS.warning} /></View>
-        <View style={styles.serviceLinkContent}><Text style={styles.serviceLinkTitle}>Envíos Express</Text><Text style={styles.serviceLinkDesc}>Paquetería rápida mismo día</Text></View>
+        <View style={styles.serviceLinkContent}><Text style={styles.serviceLinkTitle}>EnvÃ­os Express</Text><Text style={styles.serviceLinkDesc}>PaqueterÃ­a rÃ¡pida mismo dÃ­a</Text></View>
         <View style={styles.comingSoonBadge}><Text style={styles.comingSoonText}>Pronto</Text></View>
       </View>
     </View>
@@ -256,13 +256,13 @@ export default function ClienteDashboard() {
   const renderRentTab = () => (
     <View style={styles.tabContent}>
       <Text style={styles.tabTitle}>Rent-a-Car</Text>
-      <Text style={styles.tabSubtitle}>Alquila vehículos por horas o días</Text>
+      <Text style={styles.tabSubtitle}>Alquila vehÃ­culos por horas o dÃ­as</Text>
       <TouchableOpacity style={styles.serviceLink} onPress={() => router.push('/(main)/rent')}>
         <View style={[styles.serviceLinkIcon, { backgroundColor: COLORS.warning + '30' }]}><Ionicons name="key" size={24} color={COLORS.warning} /></View>
-        <View style={styles.serviceLinkContent}><Text style={styles.serviceLinkTitle}>Ver Vehículos</Text><Text style={styles.serviceLinkDesc}>Carros, motos, camionetas</Text></View>
+        <View style={styles.serviceLinkContent}><Text style={styles.serviceLinkTitle}>Ver VehÃ­culos</Text><Text style={styles.serviceLinkDesc}>Carros, motos, camionetas</Text></View>
         <Ionicons name="chevron-forward" size={20} color={COLORS.textLight} />
       </TouchableOpacity>
-      <View style={styles.promoBanner}><Text style={styles.promoTitle}>Promoción Especial</Text><Text style={styles.promoDesc}>10% de descuento en alquileres de fin de semana</Text></View>
+      <View style={styles.promoBanner}><Text style={styles.promoTitle}>PromociÃ³n Especial</Text><Text style={styles.promoDesc}>10% de descuento en alquileres de fin de semana</Text></View>
     </View>
   );
 

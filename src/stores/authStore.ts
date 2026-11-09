@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import api, { setToken, removeToken, getToken } from '../lib/api';
+import { authApi, setToken, removeToken, getToken } from '../api';
 
 export interface User {
   user_id: string;
@@ -14,6 +14,7 @@ export interface User {
   status: string;
   kyc_status?: string;
   avg_rating?: number;
+  total_trips?: number;
   created_at: string;
 }
 
@@ -41,8 +42,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   login: async (email: string, password: string) => {
     try {
-      const response = await api.post('/auth/login', { email, password });
-      const { user, token } = response.data;
+      const { user, token } = await authApi.login({ email, password });
       
       await setToken(token);
       set({ user, token, isAuthenticated: true, isLoading: false });
@@ -53,8 +53,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   register: async (data) => {
     try {
-      const response = await api.post('/auth/register', data);
-      const { user, token } = response.data;
+      const { user, token } = await authApi.register(data);
       
       await setToken(token);
       set({ user, token, isAuthenticated: true, isLoading: false });
@@ -66,7 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   forgotPassword: async (email: string) => {
     try {
       // El backend responde igual exista o no el email (no revela cuentas).
-      await api.post('/auth/forgot-password', { email });
+      await authApi.forgotPassword({ email });
     } catch (error: any) {
       throw new Error(
         error.response?.data?.detail || 'No se pudo enviar el correo de recuperación'
@@ -76,7 +75,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
-      await api.post('/auth/logout');
+      await authApi.logout();
     } catch (e) {
       // Ignore errors
     }
@@ -92,9 +91,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      const response = await api.get('/auth/me');
+      const user = await authApi.getMe();
       set({ 
-        user: response.data, 
+        user, 
         token, 
         isAuthenticated: true, 
         isLoading: false 
@@ -111,8 +110,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   refreshUser: async () => {
     try {
-      const response = await api.get('/auth/me');
-      set({ user: response.data });
+      const user = await authApi.getMe();
+      set({ user });
     } catch (error) {
       console.error('Error refreshing user:', error);
     }

@@ -39,15 +39,15 @@ export const Button: React.FC<ButtonProps> = ({
 
     switch (variant) {
       case 'secondary':
-        return [...baseStyle, styles.buttonSecondary, isDisabled && styles.buttonDisabled];
+        return [...baseStyle, styles.buttonSecondary, ...(isDisabled ? [styles.buttonDisabled] : [])];
       case 'outline':
-        return [...baseStyle, styles.buttonOutline, isDisabled && styles.buttonOutlineDisabled];
+        return [...baseStyle, styles.buttonOutline, ...(isDisabled ? [styles.buttonOutlineDisabled] : [])];
       case 'ghost':
         return [...baseStyle, styles.buttonGhost];
       case 'danger':
-        return [...baseStyle, styles.buttonDanger, isDisabled && styles.buttonDisabled];
+        return [...baseStyle, styles.buttonDanger, ...(isDisabled ? [styles.buttonDisabled] : [])];
       default:
-        return [...baseStyle, styles.buttonPrimary, isDisabled && styles.buttonDisabled];
+        return [...baseStyle, styles.buttonPrimary, ...(isDisabled ? [styles.buttonDisabled] : [])];
     }
   };
 
@@ -56,7 +56,7 @@ export const Button: React.FC<ButtonProps> = ({
 
     switch (variant) {
       case 'outline':
-        return [...baseStyle, styles.textOutline, isDisabled && styles.textDisabledOutline];
+        return [...baseStyle, styles.textOutline, ...(isDisabled ? [styles.textDisabledOutline] : [])];
       case 'ghost':
         return [...baseStyle, styles.textGhost];
       case 'danger':

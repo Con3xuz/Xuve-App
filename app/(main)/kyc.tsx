@@ -17,7 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button } from '../../src/components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
-import api from '../../src/lib/api';
+import api from '../../src/api';
 
 const ROLES = [
   { id: 'user', label: 'Cliente', desc: 'Verificacion de identidad', icon: 'person', color: '#14B8A6', steps: ['identity'] },
@@ -363,7 +363,23 @@ export default function KYCScreen() {
   );
 }
 
-function FormField({ label, placeholder, value, onChange, keyboard, multiline, style }: any) {
+function FormField({
+  label,
+  placeholder,
+  value,
+  onChange,
+  keyboard,
+  multiline,
+  style,
+}: {
+  label: string;
+  placeholder?: string;
+  value: string;
+  onChange: (v: string) => void;
+  keyboard?: any;
+  multiline?: boolean;
+  style?: any;
+}) {
   return (
     <View style={style}>
       <Text style={styles.fieldLabel}>{label}</Text>

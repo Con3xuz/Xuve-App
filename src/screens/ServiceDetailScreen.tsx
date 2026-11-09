@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
-import api from '../lib/api';
+import api from '../api';
 import { showServiceNotification } from '../utils/notifications';
 
 interface Service {
@@ -198,12 +198,12 @@ export default function ServiceDetailScreen() {
           {service.status === 'accepted' && (
             <Button
               title="Ver en Mapa"
-              onPress={() => Alert.alert('Próximamente', 'Mapa disponible en la siguiente fase')}
+              onPress={() => Alert.alert('PrÃ³ximamente', 'Mapa disponible en la siguiente fase')}
               style={styles.actionButton}
             />
           )}
           <Button
-            title="💬 Chat del Servicio"
+            title="ðŸ’¬ Chat del Servicio"
             onPress={() => {
               const query = `?serviceType=${encodeURIComponent(service.service_type)}${service.driver_id ? `&providerId=${encodeURIComponent(service.driver_id)}` : ''}`;
               router.push(`/chat/${service.service_id}${query}`);
@@ -212,7 +212,7 @@ export default function ServiceDetailScreen() {
           />
           <Button
             title="Contactar Soporte"
-            onPress={() => Alert.alert('Soporte', 'Funcionalidad próximamente')}
+            onPress={() => Alert.alert('Soporte', 'Funcionalidad prÃ³ximamente')}
             style={{ ...styles.actionButton, backgroundColor: COLORS.secondary }}
           />
         </View>

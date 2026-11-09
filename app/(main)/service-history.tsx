@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button } from '../../src/components/ui';
-import api from '../../src/lib/api';
+import api from '../../src/api';
 
 export default function ServiceHistoryScreen() {
   const router = useRouter();
@@ -55,11 +55,11 @@ export default function ServiceHistoryScreen() {
   };
 
   const submitRating = async () => {
-    if (rating === 0) { Alert.alert('Error', 'Selecciona una calificación'); return; }
+    if (rating === 0) { Alert.alert('Error', 'Selecciona una calificaciÃ³n'); return; }
     setSubmitting(true);
     try {
       await api.post(`/services/${selectedService.service_id}/rate`, { rating, comment });
-      Alert.alert('Gracias', '¡Calificación enviada!');
+      Alert.alert('Gracias', 'Â¡CalificaciÃ³n enviada!');
       setShowRatingModal(false);
       fetchServices();
     } catch (e: any) {
@@ -114,7 +114,7 @@ export default function ServiceHistoryScreen() {
           <View style={styles.emptyContainer}>
             <Ionicons name="time-outline" size={64} color={COLORS.textLight} />
             <Text style={styles.emptyText}>No hay servicios</Text>
-            <Text style={styles.emptySubtext}>Tu historial de viajes aparecerá aquí</Text>
+            <Text style={styles.emptySubtext}>Tu historial de viajes aparecerÃ¡ aquÃ­</Text>
           </View>
         ) : (
           filteredServices.map((service: any) => {
@@ -191,14 +191,14 @@ export default function ServiceHistoryScreen() {
               ))}
             </View>
             <Text style={styles.ratingLabel}>
-              {rating === 0 ? 'Toca una estrella' : rating <= 2 ? 'Podría mejorar' : rating <= 4 ? '¡Buen servicio!' : '¡Excelente!'}
+              {rating === 0 ? 'Toca una estrella' : rating <= 2 ? 'PodrÃ­a mejorar' : rating <= 4 ? 'Â¡Buen servicio!' : 'Â¡Excelente!'}
             </Text>
 
             <Text style={styles.formLabel}>Comentario (opcional)</Text>
-            <TextInput style={[styles.formInput, { minHeight: 80, textAlignVertical: 'top' }]} placeholder="¿Cómo fue tu experiencia?"
+            <TextInput style={[styles.formInput, { minHeight: 80, textAlignVertical: 'top' }]} placeholder="Â¿CÃ³mo fue tu experiencia?"
               placeholderTextColor={COLORS.textLight} multiline value={comment} onChangeText={setComment} />
 
-            <Button title="ENVIAR CALIFICACIÓN" onPress={submitRating} loading={submitting} style={{ marginTop: SPACING.lg, marginBottom: SPACING.xxl }} />
+            <Button title="ENVIAR CALIFICACIÃ“N" onPress={submitRating} loading={submitting} style={{ marginTop: SPACING.lg, marginBottom: SPACING.xxl }} />
           </View>
         </View>
       </Modal>

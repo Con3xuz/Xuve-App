@@ -4,7 +4,7 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../../stores/authStore';
-import api from '../../../lib/api';
+import { authApi } from '../../../api';
 import { computeWalletSummary } from '../types';
 import type { User, WalletSummary } from '../types';
 
@@ -25,7 +25,7 @@ export function useCurrentUser() {
   return useQuery<User, Error>({
     queryKey: USER_QUERY_KEY,
     queryFn: async () => {
-      const { data } = await api.get<User>('/auth/me');
+      const data = await authApi.getMe<User>();
       // Mantiene el authStore sincronizado con la respuesta del servidor
       updateUser(data);
       return data;

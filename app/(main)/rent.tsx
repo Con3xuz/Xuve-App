@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -18,7 +18,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button } from '../../src/components/ui';
-import api from '../../src/lib/api';
+import api from '../../src/api';
 
 const DEPOSIT_MULTIPLIER = 2;
 
@@ -114,7 +114,7 @@ export default function RentCarScreen() {
     }
     try {
       await api.post('/rent/publish', publishForm);
-      Alert.alert('Éxito', '¡Auto publicado exitosamente!');
+      Alert.alert('Ã‰xito', 'Â¡Auto publicado exitosamente!');
       setShowPublishModal(false);
       setPublishForm({ brand: '', model: '', year: '', color: '', plateNumber: '', condition: 'excelente', dailyPrice: '', description: '', location: '' });
       fetchData();
@@ -128,7 +128,7 @@ export default function RentCarScreen() {
     const depositAmount = selectedCar.daily_price * DEPOSIT_MULTIPLIER;
 
     if (userBalance < depositAmount) {
-      Alert.alert('Saldo insuficiente', `Necesitas $${depositAmount.toFixed(2)} para el depósito de garantía.`);
+      Alert.alert('Saldo insuficiente', `Necesitas $${depositAmount.toFixed(2)} para el depÃ³sito de garantÃ­a.`);
       return;
     }
 
@@ -145,7 +145,7 @@ export default function RentCarScreen() {
         hold_id: holdResponse.data.hold?.hold_id,
       });
 
-      Alert.alert('Éxito', `¡Solicitud enviada! Se han retenido $${depositAmount.toFixed(2)} como garantía.`);
+      Alert.alert('Ã‰xito', `Â¡Solicitud enviada! Se han retenido $${depositAmount.toFixed(2)} como garantÃ­a.`);
       setShowRentModal(false);
       setSelectedCar(null);
       await refreshUser();
@@ -184,7 +184,7 @@ export default function RentCarScreen() {
                   </Text>
                 </View>
                 <View style={styles.priceBadge}>
-                  <Text style={styles.priceText}>${car.daily_price}/día</Text>
+                  <Text style={styles.priceText}>${car.daily_price}/dÃ­a</Text>
                 </View>
               </View>
 
@@ -192,7 +192,7 @@ export default function RentCarScreen() {
                 <View style={styles.carInfoHeader}>
                   <View>
                     <Text style={styles.carTitle}>{car.brand} {car.model}</Text>
-                    <Text style={styles.carMeta}>{car.year} • {car.color}</Text>
+                    <Text style={styles.carMeta}>{car.year} â€¢ {car.color}</Text>
                   </View>
                   <View style={styles.ratingBadge}>
                     <Ionicons name="star" size={14} color="#F59E0B" />
@@ -239,7 +239,7 @@ export default function RentCarScreen() {
       {myCars.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Ionicons name="car-outline" size={64} color={COLORS.textLight} />
-          <Text style={styles.emptyText}>No has publicado ningún auto</Text>
+          <Text style={styles.emptyText}>No has publicado ningÃºn auto</Text>
           <Button title="PUBLICAR MI AUTO" onPress={() => setShowPublishModal(true)} style={{ marginTop: SPACING.md }} />
         </View>
       ) : (
@@ -248,7 +248,7 @@ export default function RentCarScreen() {
             <Ionicons name="car" size={20} color={COLORS.primary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.simpleCardTitle}>{car.brand} {car.model}</Text>
-              <Text style={styles.simpleCardSub}>{car.plate_number} • ${car.daily_price}/día</Text>
+              <Text style={styles.simpleCardSub}>{car.plate_number} â€¢ ${car.daily_price}/dÃ­a</Text>
             </View>
             <View style={[styles.statusBadge, { backgroundColor: car.status === 'available' ? COLORS.primary + '20' : COLORS.warning + '20' }]}>
               <Text style={[styles.statusText, { color: car.status === 'available' ? COLORS.primary : COLORS.warning }]}>
@@ -279,7 +279,7 @@ export default function RentCarScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 }}>
                   <Ionicons name="shield" size={12} color="#F59E0B" />
                   <Text style={{ fontSize: FONT_SIZE.xs, color: '#F59E0B' }}>
-                    Depósito: ${rental.deposit_amount.toFixed(2)}
+                    DepÃ³sito: ${rental.deposit_amount.toFixed(2)}
                   </Text>
                 </View>
               )}
@@ -312,7 +312,7 @@ export default function RentCarScreen() {
         <View style={styles.headerRow}>
           <View>
             <Text style={styles.title}>XUVE RENT</Text>
-            <Text style={styles.subtitle}>Alquiler de vehículos P2P</Text>
+            <Text style={styles.subtitle}>Alquiler de vehÃ­culos P2P</Text>
           </View>
           <TouchableOpacity style={styles.publishBtn} onPress={() => setShowPublishModal(true)}>
             <Ionicons name="add" size={18} color={COLORS.textOnPrimary} />
@@ -391,7 +391,7 @@ export default function RentCarScreen() {
               </View>
               <View style={styles.formRow}>
                 <View style={styles.formHalf}>
-                  <Text style={styles.formLabel}>Año</Text>
+                  <Text style={styles.formLabel}>AÃ±o</Text>
                   <TextInput style={styles.formInput} placeholder="2020" placeholderTextColor={COLORS.textLight} keyboardType="numeric"
                     value={publishForm.year} onChangeText={(t) => setPublishForm(p => ({ ...p, year: t }))} />
                 </View>
@@ -407,7 +407,7 @@ export default function RentCarScreen() {
                 value={publishForm.plateNumber} onChangeText={(t) => setPublishForm(p => ({ ...p, plateNumber: t.toUpperCase() }))}
                 autoCapitalize="characters" />
 
-              <Text style={styles.formLabel}>Estado del Vehículo</Text>
+              <Text style={styles.formLabel}>Estado del VehÃ­culo</Text>
               <View style={styles.conditionRow}>
                 {(['excelente', 'bueno', 'regular'] as const).map((cond) => (
                   <TouchableOpacity
@@ -429,11 +429,11 @@ export default function RentCarScreen() {
               <TextInput style={styles.formInput} placeholder="25.00" placeholderTextColor={COLORS.textLight} keyboardType="numeric"
                 value={publishForm.dailyPrice} onChangeText={(t) => setPublishForm(p => ({ ...p, dailyPrice: t }))} />
 
-              <Text style={styles.formLabel}>Ubicación</Text>
-              <TextInput style={styles.formInput} placeholder="Mérida Centro" placeholderTextColor={COLORS.textLight}
+              <Text style={styles.formLabel}>UbicaciÃ³n</Text>
+              <TextInput style={styles.formInput} placeholder="MÃ©rida Centro" placeholderTextColor={COLORS.textLight}
                 value={publishForm.location} onChangeText={(t) => setPublishForm(p => ({ ...p, location: t }))} />
 
-              <Text style={styles.formLabel}>Descripción</Text>
+              <Text style={styles.formLabel}>DescripciÃ³n</Text>
               <TextInput style={[styles.formInput, { minHeight: 80, textAlignVertical: 'top' }]} placeholder="Describe las condiciones..."
                 placeholderTextColor={COLORS.textLight} multiline
                 value={publishForm.description} onChangeText={(t) => setPublishForm(p => ({ ...p, description: t }))} />
@@ -467,7 +467,7 @@ export default function RentCarScreen() {
 
                   {/* Owner info */}
                   <View style={styles.ownerCard}>
-                    <Text style={styles.ownerLabel}>Dueño del Vehículo</Text>
+                    <Text style={styles.ownerLabel}>DueÃ±o del VehÃ­culo</Text>
                     <View style={styles.ownerRow}>
                       <View style={styles.ownerAvatar}>
                         <Ionicons name="person" size={24} color={COLORS.primary} />
@@ -481,7 +481,7 @@ export default function RentCarScreen() {
 
                   {/* Price */}
                   <View style={styles.priceCard}>
-                    <Text style={styles.priceLabelText}>Precio por día</Text>
+                    <Text style={styles.priceLabelText}>Precio por dÃ­a</Text>
                     <Text style={styles.priceAmount}>${selectedCar.daily_price}</Text>
                   </View>
 
@@ -489,13 +489,13 @@ export default function RentCarScreen() {
                   <View style={styles.depositCard}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.sm }}>
                       <Ionicons name="shield" size={18} color="#F59E0B" />
-                      <Text style={styles.depositTitle}>Depósito de Garantía</Text>
+                      <Text style={styles.depositTitle}>DepÃ³sito de GarantÃ­a</Text>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <Text style={styles.depositLabel}>{DEPOSIT_MULTIPLIER} días como garantía</Text>
+                      <Text style={styles.depositLabel}>{DEPOSIT_MULTIPLIER} dÃ­as como garantÃ­a</Text>
                       <Text style={styles.depositAmount}>${(selectedCar.daily_price * DEPOSIT_MULTIPLIER).toFixed(2)}</Text>
                     </View>
-                    <Text style={styles.depositNote}>Se retendrá de tu billetera hasta devolver el vehículo</Text>
+                    <Text style={styles.depositNote}>Se retendrÃ¡ de tu billetera hasta devolver el vehÃ­culo</Text>
                   </View>
 
                   {/* Balance */}
@@ -516,7 +516,7 @@ export default function RentCarScreen() {
                   )}
 
                   <Button
-                    title={processingHold ? 'Procesando garantía...' : 'CONFIRMAR SOLICITUD'}
+                    title={processingHold ? 'Procesando garantÃ­a...' : 'CONFIRMAR SOLICITUD'}
                     onPress={handleRentRequest}
                     loading={processingHold}
                     disabled={userBalance < (selectedCar.daily_price * DEPOSIT_MULTIPLIER)}

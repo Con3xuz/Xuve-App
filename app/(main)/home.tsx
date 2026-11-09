@@ -3,9 +3,9 @@ import { StyleSheet, View, Animated } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../../src/stores/authStore';
 import { COLORS, SPACING, BORDER_RADIUS } from '../../src/constants/theme';
+import ClienteDashboard from '../../src/screens/ClienteDashboard';
 
-// --- Lazy imports: cada dashboard se carga SOLO cuando el rol lo requiere ---
-const ClienteDashboard    = React.lazy(() => import('../../src/screens/ClienteDashboard'));
+// --- Lazy imports: solo para roles especializados de socios/proveedores ---
 const ConductorDashboard  = React.lazy(() => import('../../src/screens/ConductorDashboard'));
 const RepartidorDashboard = React.lazy(() => import('../../src/screens/RepartidorDashboard'));
 const MedicoDashboard     = React.lazy(() => import('../../src/screens/MedicoDashboard'));

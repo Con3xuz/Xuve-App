@@ -3,7 +3,7 @@
 // Tiene staleTime alto porque la tasa no cambia cada segundo.
 
 import { useQuery } from '@tanstack/react-query';
-import api from '../../../lib/api';
+import { exchangeRateApi } from '../../../api';
 import type { ExchangeRate } from '../types';
 
 export const EXCHANGE_RATE_QUERY_KEY = ['exchange-rate'] as const;
@@ -21,8 +21,7 @@ export function useExchangeRate() {
   return useQuery<ExchangeRate, Error>({
     queryKey: EXCHANGE_RATE_QUERY_KEY,
     queryFn: async () => {
-      const { data } = await api.get<ExchangeRate>('/exchange-rate');
-      return data;
+      return exchangeRateApi.getExchangeRate<ExchangeRate>();
     },
     staleTime: 1000 * 60 * 10,   // 10 min
     gcTime:    1000 * 60 * 30,   // 30 min

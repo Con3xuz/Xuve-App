@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
-import api from '../../src/lib/api';
+import api from '../../src/api';
 
 interface Notification {
   notification_id: string;
@@ -102,7 +102,7 @@ export default function NotificationsScreen() {
           <View style={styles.emptyContainer}>
             <Ionicons name="notifications-off-outline" size={64} color={COLORS.textLight} />
             <Text style={styles.emptyText}>Sin notificaciones</Text>
-            <Text style={styles.emptySubtext}>Tus avisos aparecerán aquí</Text>
+            <Text style={styles.emptySubtext}>Tus avisos aparecerÃ¡n aquÃ­</Text>
           </View>
         ) : (
           <View style={styles.notifList}>

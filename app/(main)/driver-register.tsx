@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button } from '../../src/components/ui';
-import api from '../../src/lib/api';
+import api from '../../src/api';
 
 const VEHICLE_TYPES = [
   { id: 'moto', label: 'Moto', icon: 'bicycle', toll: '$0.50' },
@@ -31,8 +31,8 @@ const REQUIRED_DOCS = [
   { id: 'vehiclePhotoBack', label: 'Foto Trasera', icon: 'camera' },
   { id: 'vehiclePhotoLeft', label: 'Foto Lateral Izq', icon: 'camera' },
   { id: 'vehiclePhotoRight', label: 'Foto Lateral Der', icon: 'camera' },
-  { id: 'circulationCard', label: 'Carnet de Circulación', icon: 'document-text' },
-  { id: 'insurancePolicy', label: 'Póliza de Seguro', icon: 'shield-checkmark' },
+  { id: 'circulationCard', label: 'Carnet de CirculaciÃ³n', icon: 'document-text' },
+  { id: 'insurancePolicy', label: 'PÃ³liza de Seguro', icon: 'shield-checkmark' },
   { id: 'driverLicense', label: 'Licencia de Conducir', icon: 'card' },
   { id: 'driverPhoto', label: 'Foto del Conductor', icon: 'person' },
 ];
@@ -72,7 +72,7 @@ export default function DriverRegisterScreen() {
         vehicle: vehicleData,
         documents,
       });
-      Alert.alert('¡Solicitud Enviada!', 'Tu registro como socio está en revisión. Te notificaremos cuando sea aprobado.', [
+      Alert.alert('Â¡Solicitud Enviada!', 'Tu registro como socio estÃ¡ en revisiÃ³n. Te notificaremos cuando sea aprobado.', [
         { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (e: any) {
@@ -108,19 +108,19 @@ export default function DriverRegisterScreen() {
         {step === 1 && (
           <View>
             <Text style={styles.stepTitle}>Datos Personales</Text>
-            <Text style={styles.stepDesc}>Información básica del conductor</Text>
+            <Text style={styles.stepDesc}>InformaciÃ³n bÃ¡sica del conductor</Text>
 
             <Text style={styles.formLabel}>Nombre completo *</Text>
-            <TextInput style={styles.formInput} value={personalData.fullName} onChangeText={t => setPersonalData(p => ({ ...p, fullName: t }))} placeholder="Juan Pérez" placeholderTextColor={COLORS.textLight} />
+            <TextInput style={styles.formInput} value={personalData.fullName} onChangeText={t => setPersonalData(p => ({ ...p, fullName: t }))} placeholder="Juan PÃ©rez" placeholderTextColor={COLORS.textLight} />
 
-            <Text style={styles.formLabel}>Cédula *</Text>
+            <Text style={styles.formLabel}>CÃ©dula *</Text>
             <TextInput style={styles.formInput} value={personalData.cedula} onChangeText={t => setPersonalData(p => ({ ...p, cedula: t }))} placeholder="V-12345678" placeholderTextColor={COLORS.textLight} />
 
-            <Text style={styles.formLabel}>Teléfono *</Text>
+            <Text style={styles.formLabel}>TelÃ©fono *</Text>
             <TextInput style={styles.formInput} value={personalData.phone} onChangeText={t => setPersonalData(p => ({ ...p, phone: t }))} placeholder="0412-555-1234" keyboardType="phone-pad" placeholderTextColor={COLORS.textLight} />
 
-            <Text style={styles.formLabel}>Dirección *</Text>
-            <TextInput style={styles.formInput} value={personalData.address} onChangeText={t => setPersonalData(p => ({ ...p, address: t }))} placeholder="Av. Las Américas..." placeholderTextColor={COLORS.textLight} />
+            <Text style={styles.formLabel}>DirecciÃ³n *</Text>
+            <TextInput style={styles.formInput} value={personalData.address} onChangeText={t => setPersonalData(p => ({ ...p, address: t }))} placeholder="Av. Las AmÃ©ricas..." placeholderTextColor={COLORS.textLight} />
 
             <Text style={styles.formLabel}>Fecha de nacimiento</Text>
             <TextInput style={styles.formInput} value={personalData.birthDate} onChangeText={t => setPersonalData(p => ({ ...p, birthDate: t }))} placeholder="DD/MM/AAAA" placeholderTextColor={COLORS.textLight} />
@@ -129,26 +129,26 @@ export default function DriverRegisterScreen() {
           </View>
         )}
 
-        {/* Step 2: Datos del Vehículo */}
+        {/* Step 2: Datos del VehÃ­culo */}
         {step === 2 && (
           <View>
-            <Text style={styles.stepTitle}>Datos del Vehículo</Text>
-            <Text style={styles.stepDesc}>Información de tu vehículo</Text>
+            <Text style={styles.stepTitle}>Datos del VehÃ­culo</Text>
+            <Text style={styles.stepDesc}>InformaciÃ³n de tu vehÃ­culo</Text>
 
-            <Text style={styles.formLabel}>Tipo de vehículo</Text>
+            <Text style={styles.formLabel}>Tipo de vehÃ­culo</Text>
             <View style={styles.vehicleGrid}>
               {VEHICLE_TYPES.map(v => (
                 <TouchableOpacity key={v.id} style={[styles.vehicleCard, vehicleData.vehicleType === v.id && styles.vehicleCardActive]}
                   onPress={() => setVehicleData(p => ({ ...p, vehicleType: v.id }))}>
                   <Ionicons name={v.icon as any} size={24} color={vehicleData.vehicleType === v.id ? COLORS.primary : COLORS.textSecondary} />
                   <Text style={[styles.vehicleLabel, vehicleData.vehicleType === v.id && { color: COLORS.primary }]}>{v.label}</Text>
-                  <Text style={styles.vehicleToll}>{v.toll}/día</Text>
+                  <Text style={styles.vehicleToll}>{v.toll}/dÃ­a</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <View style={styles.ownerToggle}>
-              <Text style={styles.formLabel}>¿Eres el dueño del vehículo?</Text>
+              <Text style={styles.formLabel}>Â¿Eres el dueÃ±o del vehÃ­culo?</Text>
               <Switch value={vehicleData.isOwner} onValueChange={v => setVehicleData(p => ({ ...p, isOwner: v }))}
                 trackColor={{ false: COLORS.border, true: COLORS.primary + '40' }} thumbColor={vehicleData.isOwner ? COLORS.primary : COLORS.textLight} />
             </View>
@@ -174,19 +174,19 @@ export default function DriverRegisterScreen() {
                 <TextInput style={styles.formInput} value={vehicleData.vehicleColor} onChangeText={t => setVehicleData(p => ({ ...p, vehicleColor: t }))} placeholder="Blanco" placeholderTextColor={COLORS.textLight} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.formLabel}>Año</Text>
+                <Text style={styles.formLabel}>AÃ±o</Text>
                 <TextInput style={styles.formInput} value={vehicleData.vehicleYear} onChangeText={t => setVehicleData(p => ({ ...p, vehicleYear: t }))} placeholder="2020" keyboardType="numeric" placeholderTextColor={COLORS.textLight} />
               </View>
             </View>
 
             {!vehicleData.isOwner && (
               <View style={styles.avanceSection}>
-                <Text style={styles.avanceTitle}>Datos del Dueño (Avance)</Text>
-                <Text style={styles.formLabel}>Cédula del dueño</Text>
+                <Text style={styles.avanceTitle}>Datos del DueÃ±o (Avance)</Text>
+                <Text style={styles.formLabel}>CÃ©dula del dueÃ±o</Text>
                 <TextInput style={styles.formInput} value={vehicleData.ownerCedula} onChangeText={t => setVehicleData(p => ({ ...p, ownerCedula: t }))} placeholder="V-12345678" placeholderTextColor={COLORS.textLight} />
-                <Text style={styles.formLabel}>Nombre del dueño</Text>
+                <Text style={styles.formLabel}>Nombre del dueÃ±o</Text>
                 <TextInput style={styles.formInput} value={vehicleData.ownerName} onChangeText={t => setVehicleData(p => ({ ...p, ownerName: t }))} placeholder="Nombre completo" placeholderTextColor={COLORS.textLight} />
-                <Text style={styles.formLabel}>Teléfono del dueño</Text>
+                <Text style={styles.formLabel}>TelÃ©fono del dueÃ±o</Text>
                 <TextInput style={styles.formInput} value={vehicleData.ownerPhone} onChangeText={t => setVehicleData(p => ({ ...p, ownerPhone: t }))} placeholder="0412..." keyboardType="phone-pad" placeholderTextColor={COLORS.textLight} />
               </View>
             )}
@@ -198,7 +198,7 @@ export default function DriverRegisterScreen() {
         {/* Step 3: Documentos */}
         {step === 3 && (
           <View>
-            <Text style={styles.stepTitle}>Documentación</Text>
+            <Text style={styles.stepTitle}>DocumentaciÃ³n</Text>
             <Text style={styles.stepDesc}>{uploadedCount}/{REQUIRED_DOCS.length} documentos subidos</Text>
 
             {/* Progress */}

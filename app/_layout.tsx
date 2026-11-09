@@ -24,7 +24,7 @@ function useProtectedRoute() {
     if (isLoading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
-    const isIndex = segments.length === 0 || segments[0] === undefined;
+    const isIndex = (segments as string[]).length === 0 || segments[0] === undefined;
 
     if (!isAuthenticated && !inAuthGroup && !isIndex) {
       // Not authenticated and not on auth/splash screen → redirect to login
