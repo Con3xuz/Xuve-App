@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../../src/stores/authStore';
 import { COLORS, SPACING, BORDER_RADIUS } from '../../src/constants/theme';
 import ClienteDashboard from '../../src/screens/ClienteDashboard';
+import MaintenanceView from '../../src/components/MaintenanceView';
 
 // --- Lazy imports: solo para roles especializados de socios/proveedores ---
 const ConductorDashboard  = React.lazy(() => import('../../src/screens/ConductorDashboard'));
@@ -58,8 +59,33 @@ function DashboardSkeleton() {
   );
 }
 
+// Flag para enfocar la app exclusivamente en el ecosistema Uber (viajes + conductores)
+const FOCUS_UBER_MODE = true;
+
 // --- Selector de dashboard por rol ---
 function RoleDashboard({ role }: { role: string }) {
+  if (FOCUS_UBER_MODE) {
+    if (role === 'socio_conductor') {
+      return <ConductorDashboard />;
+    }
+    if (role === 'socio_repartidor' || role === 'medico' || role === 'socio_comercial' || role === 'rent_owner') {
+      const roleTitles: Record<string, string> = {
+        socio_repartidor: 'Panel de Repartidor',
+        medico: 'Panel Médico',
+        socio_comercial: 'Panel Comercial',
+        rent_owner: 'Panel de Rent-a-Car',
+      };
+      return (
+        <MaintenanceView
+          moduleName={roleTitles[role] || 'Módulo Especializado'}
+          description="Este módulo se encuentra en pausa operativa mientras priorizamos el servicio de transporte y conductores Xuve."
+          showBackButton={false}
+        />
+      );
+    }
+    return <ClienteDashboard />;
+  }
+
   switch (role) {
     case 'socio_conductor':  return <ConductorDashboard />;
     case 'socio_repartidor': return <RepartidorDashboard />;

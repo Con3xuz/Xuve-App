@@ -99,28 +99,21 @@ export default function ActiveRideScreen() {
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Mapa con la ruta real del viaje */}
-        {origin && destination ? (
-          <View style={styles.mapWrapper}>
-            <XuveMapView
-              origin={origin}
-              destination={destination}
-              routeCoordinates={route?.polyline}
-              style={styles.mapArea}
-            />
-            {route && (
-              <View style={styles.mapEta}>
-                <Ionicons name="navigate" size={14} color={COLORS.primary} />
-                <Text style={styles.mapEtaText}>{route.distance_text} • {route.duration_text}</Text>
-              </View>
-            )}
-          </View>
-        ) : (
-          <View style={styles.mapArea}>
-            <Ionicons name="navigate-circle" size={64} color={COLORS.primary + '50'} />
-            <Text style={styles.mapText}>Mapa en tiempo real</Text>
-          </View>
-        )}
+        {/* Mapa con la ruta interactiva del viaje */}
+        <View style={styles.mapWrapper}>
+          <XuveMapView
+            origin={origin}
+            destination={destination}
+            routeCoordinates={route?.polyline}
+            style={styles.mapArea}
+          />
+          {route && (
+            <View style={styles.mapEta}>
+              <Ionicons name="navigate" size={14} color={COLORS.primary} />
+              <Text style={styles.mapEtaText}>{route.distance_text} • {route.duration_text}</Text>
+            </View>
+          )}
+        </View>
 
         {/* Status Steps */}
         <View style={styles.stepsContainer}>

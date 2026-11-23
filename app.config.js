@@ -16,6 +16,12 @@ const MAPS_KEY = process.env.EXPO_PUBLIC_GOOGLE_MAPS_KEY || '';
 
 export default ({ config }) => ({
   ...config,
+  updates: {
+    url: 'https://u.expo.dev/76027bd2-640f-46fc-8d04-860cd5e9ac3f',
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   ios: {
     ...config.ios,
     config: {

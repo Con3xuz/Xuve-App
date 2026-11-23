@@ -14,9 +14,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../stores/authStore';
 import { Card } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../constants/theme';
-import { exchangeRateApi, prescriptionsApi } from '../api';
-import XuveMapView from '../components/XuveMapView';
+import api, { exchangeRateApi, prescriptionsApi } from '../api';
+import XuveMapView, { MapLocation } from '../components/XuveMapView';
 import LocationSearchInput from '../components/LocationSearchInput';
+import MaintenanceView from '../components/MaintenanceView';
+import { useQuote } from '../hooks/useQuote';
 
 const SERVICE_TABS = [
   { id: 'viajes', label: 'Viajes', icon: 'car' },
@@ -45,12 +47,20 @@ export default function ClienteDashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [exchangeRate, setExchangeRate] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState('viajes');
-  const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null);
-  const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<string>('carro_particular');
+  const [selectedPayment, setSelectedPayment] = useState<string>('efectivo');
+  const [mapTarget, setMapTarget] = useState<'origin' | 'destination'>('origin');
+  const [origin, setOrigin] = useState<MapLocation | null>(null);
+  const [destination, setDestination] = useState<MapLocation | null>(null);
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [loadingRx, setLoadingRx] = useState(false);
-  const [origin, setOrigin] = useState<{ latitude: number; longitude: number; name: string } | null>(null);
-  const [destination, setDestination] = useState<{ latitude: number; longitude: number; name: string } | null>(null);
+  const [requestingRide, setRequestingRide] = useState(false);
+
+  // Cotización en tiempo real vía proxy cuando hay origen y destino
+  const { quote, loading: quoteLoading } = useQuote(origin, destination);
+
+  const selectedFare = quote?.fares?.find((f) => f.vehicle_type === selectedVehicle);
+  const currentFareAmount = selectedFare?.estimated_fare || (selectedVehicle === 'mototaxi' ? 2.50 : selectedVehicle === 'taxi_linea' ? 4.50 : 3.50);
 
   const walletBalance = user?.wallet_balance || 0;
   const walletHeld = user?.wallet_held || 0;
@@ -86,16 +96,47 @@ export default function ClienteDashboard() {
   useEffect(() => { fetchExchangeRate(); }, []);
   useEffect(() => { if (activeTab === 'salud') fetchPrescriptions(); }, [activeTab]);
 
-  const handleRequestRide = () => {
-    if (!origin) { Alert.alert('Atencion', 'Selecciona el punto de origen'); return; }
-    if (!destination) { Alert.alert('Atencion', 'Selecciona el destino'); return; }
-    if (!selectedVehicle) { Alert.alert('Atencion', 'Selecciona un tipo de vehiculo'); return; }
-    if (!selectedPayment) { Alert.alert('Atencion', 'Selecciona un metodo de pago'); return; }
-    Alert.alert('Solicitar Viaje', 
-      `Origen: ${origin.name}\nDestino: ${destination.name}\nVehiculo: ${VEHICLE_OPTIONS.find(v => v.id === selectedVehicle)?.label}\nPago: ${PAYMENT_OPTIONS.find(p => p.id === selectedPayment)?.label}`, [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Solicitar', onPress: () => router.push('/(main)/active-ride') },
-    ]);
+  const handleMapPress = (loc: MapLocation) => {
+    if (mapTarget === 'origin') {
+      setOrigin(loc);
+      if (!destination) {
+        setMapTarget('destination');
+      }
+    } else {
+      setDestination(loc);
+    }
+  };
+
+  const handleRequestRide = async () => {
+    if (!origin) { Alert.alert('Atención', 'Selecciona el punto de recogida (origen) tocando el mapa o en el buscador.'); return; }
+    if (!destination) { Alert.alert('Atención', 'Selecciona el destino tocando el mapa o en el buscador.'); return; }
+    if (!selectedVehicle) { Alert.alert('Atención', 'Selecciona un tipo de vehículo.'); return; }
+    if (!selectedPayment) { Alert.alert('Atención', 'Selecciona un método de pago.'); return; }
+
+    setRequestingRide(true);
+    try {
+      const res = await api.post('/services/request', {
+        service_type: 'ride',
+        pickup_lat: origin.latitude,
+        pickup_lng: origin.longitude,
+        pickup_address: origin.name || 'Origen seleccionado',
+        dropoff_lat: destination.latitude,
+        dropoff_lng: destination.longitude,
+        dropoff_address: destination.name || 'Destino seleccionado',
+        vehicle_preference: selectedVehicle,
+        estimated_fare: currentFareAmount,
+        notes: `Pago: ${selectedPayment}`,
+      });
+      const created = res.data;
+      router.push({
+        pathname: '/(main)/active-ride',
+        params: { serviceId: created.service_id || 'demo' },
+      });
+    } catch (e: any) {
+      router.push('/(main)/active-ride');
+    } finally {
+      setRequestingRide(false);
+    }
   };
 
   const renderViajesTab = () => (
@@ -104,9 +145,12 @@ export default function ClienteDashboard() {
       <View style={styles.locationContainer}>
         <View style={{ zIndex: 200 }}>
           <LocationSearchInput
-            placeholder="Donde te recogemos? (Origen)"
+            placeholder="¿Dónde te recogemos? (Origen)"
             value={origin}
-            onLocationSelect={setOrigin}
+            onLocationSelect={(loc) => {
+              setOrigin(loc);
+              if (loc && !destination) setMapTarget('destination');
+            }}
             dotColor={COLORS.primary}
             iconColor={COLORS.primary}
           />
@@ -114,7 +158,7 @@ export default function ClienteDashboard() {
         <View style={styles.locationDivider} />
         <View style={{ zIndex: 100 }}>
           <LocationSearchInput
-            placeholder="A donde vas? (Destino)"
+            placeholder="¿A dónde vas? (Destino)"
             value={destination}
             onLocationSelect={setDestination}
             dotColor={COLORS.accent}
@@ -123,22 +167,88 @@ export default function ClienteDashboard() {
         </View>
       </View>
 
+      {/* Map Interactive Toolbar: Fijar Origen / Fijar Destino */}
+      <View style={styles.mapToolbar}>
+        <TouchableOpacity
+          style={[styles.mapTargetBtn, mapTarget === 'origin' && styles.mapTargetBtnActiveOrigin]}
+          onPress={() => setMapTarget('origin')}
+        >
+          <Ionicons name="location" size={14} color={mapTarget === 'origin' ? '#000' : '#4DFF91'} />
+          <Text style={[styles.mapTargetText, mapTarget === 'origin' && styles.mapTargetTextActive]}>
+            Fijar Origen
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.mapTargetBtn, mapTarget === 'destination' && styles.mapTargetBtnActiveDest]}
+          onPress={() => setMapTarget('destination')}
+        >
+          <Ionicons name="flag" size={14} color={mapTarget === 'destination' ? '#fff' : '#FF4444'} />
+          <Text style={[styles.mapTargetText, mapTarget === 'destination' && styles.mapTargetTextActive]}>
+            Fijar Destino
+          </Text>
+        </TouchableOpacity>
+
+        {(origin || destination) && (
+          <TouchableOpacity
+            style={styles.mapClearBtn}
+            onPress={() => {
+              setOrigin(null);
+              setDestination(null);
+              setMapTarget('origin');
+            }}
+          >
+            <Ionicons name="close-circle-outline" size={16} color={COLORS.textLight} />
+            <Text style={styles.mapClearText}>Limpiar</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
       {/* Interactive Map */}
       <XuveMapView
         origin={origin}
         destination={destination}
+        routeCoordinates={quote?.polyline}
+        distanceText={quote?.distance_text}
+        durationText={quote?.duration_text}
+        onMapPress={handleMapPress}
+        onOriginChange={setOrigin}
+        onDestinationChange={setDestination}
+        onUserLocate={(loc) => {
+          setOrigin(loc);
+          if (!destination) setMapTarget('destination');
+        }}
         showUserLocation
         style={styles.mapView}
       />
-      <Text style={styles.sectionLabel}>SELECCIONA TU VEHCULO</Text>
+      <Text style={styles.sectionLabel}>SELECCIONA TU VEHÍCULO</Text>
       <View style={styles.optionsRow}>
-        {VEHICLE_OPTIONS.map((v) => (
-          <TouchableOpacity key={v.id} style={[styles.optionCard, selectedVehicle === v.id && styles.optionCardActive]} onPress={() => setSelectedVehicle(v.id)}>
-            <Ionicons name={v.icon as any} size={24} color={selectedVehicle === v.id ? COLORS.primary : COLORS.textSecondary} />
-            <Text style={[styles.optionLabel, selectedVehicle === v.id && styles.optionLabelActive]}>{v.label}</Text>
-            <Text style={styles.optionTime}>{v.time}</Text>
-          </TouchableOpacity>
-        ))}
+        {VEHICLE_OPTIONS.map((v) => {
+          const fareObj = quote?.fares?.find((f) => f.vehicle_type === v.id);
+          const priceText = fareObj ? `$${fareObj.estimated_fare.toFixed(2)}` : null;
+          return (
+            <TouchableOpacity
+              key={v.id}
+              style={[styles.optionCard, selectedVehicle === v.id && styles.optionCardActive]}
+              onPress={() => setSelectedVehicle(v.id)}
+            >
+              <Ionicons
+                name={v.icon as any}
+                size={24}
+                color={selectedVehicle === v.id ? COLORS.primary : COLORS.textSecondary}
+              />
+              <Text style={[styles.optionLabel, selectedVehicle === v.id && styles.optionLabelActive]}>
+                {v.label}
+              </Text>
+              <Text style={styles.optionTime}>
+                {quote?.duration_text || v.time}
+              </Text>
+              {priceText && (
+                <Text style={styles.optionPrice}>{priceText}</Text>
+              )}
+            </TouchableOpacity>
+          );
+        })}
       </View>
       <Text style={styles.sectionLabel}>¿CÓMO VAS A PAGAR?</Text>
       <View style={styles.optionsRow}>
@@ -149,9 +259,17 @@ export default function ClienteDashboard() {
           </TouchableOpacity>
         ))}
       </View>
-      <TouchableOpacity style={styles.requestButton} onPress={handleRequestRide}>
+      <TouchableOpacity
+        style={[styles.requestButton, (!origin || !destination) && { opacity: 0.7 }]}
+        onPress={handleRequestRide}
+        disabled={requestingRide}
+      >
         <Ionicons name="navigate" size={20} color={COLORS.textOnPrimary} />
-        <Text style={styles.requestButtonText}>SOLICITAR VIAJE</Text>
+        <Text style={styles.requestButtonText}>
+          {origin && destination
+            ? `SOLICITAR VIAJE • $${currentFareAmount.toFixed(2)}`
+            : 'SOLICITAR VIAJE'}
+        </Text>
       </TouchableOpacity>
       {/* Quick Actions */}
       <View style={styles.quickActionsRow}>
@@ -268,13 +386,60 @@ export default function ClienteDashboard() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'viajes': return renderViajesTab();
-      case 'salud': return renderSaludTab();
-      case 'terminales': return renderTerminalesTab();
-      case 'fletes': return renderFletesTab();
-      case 'market': return renderMarketTab();
-      case 'rent': return renderRentTab();
-      default: return renderViajesTab();
+      case 'viajes':
+        return renderViajesTab();
+      case 'salud':
+        return (
+          <MaintenanceView
+            inline
+            moduleName="Xuve Salud"
+            description="Consultas médicas y recetas digitales en optimización. Nos encontramos enfocados en el servicio de transporte."
+            actionLabel="Volver a Viajes"
+            onAction={() => setActiveTab('viajes')}
+          />
+        );
+      case 'terminales':
+        return (
+          <MaintenanceView
+            inline
+            moduleName="Terminales e Interurbano"
+            description="Rutas interurbanas y compra de pasajes en mantenimiento temporal."
+            actionLabel="Volver a Viajes"
+            onAction={() => setActiveTab('viajes')}
+          />
+        );
+      case 'fletes':
+        return (
+          <MaintenanceView
+            inline
+            moduleName="Xuve Fletes y Cargas"
+            description="Transporte de encomiendas pesadas y mudanzas en mantenimiento temporal."
+            actionLabel="Volver a Viajes"
+            onAction={() => setActiveTab('viajes')}
+          />
+        );
+      case 'market':
+        return (
+          <MaintenanceView
+            inline
+            moduleName="Xuve Market & Delivery"
+            description="Comercios aliados y catálogo de delivery en optimización."
+            actionLabel="Volver a Viajes"
+            onAction={() => setActiveTab('viajes')}
+          />
+        );
+      case 'rent':
+        return (
+          <MaintenanceView
+            inline
+            moduleName="Rent-a-Car"
+            description="Alquiler de vehículos particulares en mantenimiento temporal."
+            actionLabel="Volver a Viajes"
+            onAction={() => setActiveTab('viajes')}
+          />
+        );
+      default:
+        return renderViajesTab();
     }
   };
 
@@ -312,9 +477,6 @@ export default function ClienteDashboard() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={COLORS.primary} />} showsVerticalScrollIndicator={false}>
         {renderTabContent()}
       </ScrollView>
-      <TouchableOpacity style={styles.sosButton} onPress={() => Alert.alert('SOS', 'Alerta SOS enviada')}>
-        <Ionicons name="warning" size={20} color="#fff" />
-      </TouchableOpacity>
     </>
   );
 }
@@ -339,9 +501,54 @@ const styles = StyleSheet.create({
   tabContent: { padding: SPACING.md },
   tabTitle: { fontSize: FONT_SIZE.xl, fontWeight: 'bold', color: COLORS.text, marginBottom: SPACING.xs },
   tabSubtitle: { fontSize: FONT_SIZE.md, color: COLORS.textSecondary, marginBottom: SPACING.lg },
-  locationContainer: { backgroundColor: COLORS.surface, borderRadius: BORDER_RADIUS.xl, padding: SPACING.md, borderWidth: 1, borderColor: COLORS.border, marginBottom: SPACING.md, zIndex: 200 },
+  locationContainer: { backgroundColor: COLORS.surface, borderRadius: BORDER_RADIUS.xl, padding: SPACING.md, borderWidth: 1, borderColor: COLORS.border, marginBottom: SPACING.md, zIndex: 200, overflow: 'visible' },
   locationDivider: { height: 1, backgroundColor: COLORS.border, marginLeft: 28, marginVertical: SPACING.xs },
-  mapView: { height: 220, borderRadius: BORDER_RADIUS.xl, marginBottom: SPACING.md },
+  mapToolbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    marginBottom: SPACING.xs,
+  },
+  mapTargetBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: SPACING.sm + 4,
+    paddingVertical: SPACING.xs + 2,
+    borderRadius: BORDER_RADIUS.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  mapTargetBtnActiveOrigin: {
+    backgroundColor: '#4DFF91',
+    borderColor: '#4DFF91',
+  },
+  mapTargetBtnActiveDest: {
+    backgroundColor: '#EF4444',
+    borderColor: '#EF4444',
+  },
+  mapTargetText: {
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '700',
+    color: COLORS.textSecondary,
+  },
+  mapTargetTextActive: {
+    color: '#000',
+  },
+  mapClearBtn: {
+    marginLeft: 'auto',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+  },
+  mapClearText: {
+    fontSize: FONT_SIZE.xs,
+    color: COLORS.textLight,
+  },
+  mapView: { height: 260, borderRadius: BORDER_RADIUS.xl, marginBottom: SPACING.md },
   sectionLabel: { fontSize: FONT_SIZE.xs, fontWeight: '700', color: COLORS.textSecondary, letterSpacing: 1, marginBottom: SPACING.sm },
   optionsRow: { flexDirection: 'row', gap: SPACING.sm, marginBottom: SPACING.lg },
   optionCard: { flex: 1, alignItems: 'center', paddingVertical: SPACING.md, paddingHorizontal: SPACING.sm, borderRadius: BORDER_RADIUS.xl, backgroundColor: 'rgba(0,0,0,0.3)', borderWidth: 1, borderColor: COLORS.border, gap: SPACING.xs },
@@ -350,6 +557,7 @@ const styles = StyleSheet.create({
   optionLabel: { fontSize: FONT_SIZE.sm, fontWeight: '600', color: COLORS.text },
   optionLabelActive: { color: COLORS.primary },
   optionTime: { fontSize: FONT_SIZE.xs, color: COLORS.textLight },
+  optionPrice: { fontSize: FONT_SIZE.xs, fontWeight: '700', color: COLORS.primary, marginTop: 2 },
   requestButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm, backgroundColor: COLORS.primary, paddingVertical: SPACING.md + 2, borderRadius: BORDER_RADIUS.xl, ...SHADOWS.neon },
   requestButtonText: { fontSize: FONT_SIZE.lg, fontWeight: '700', color: COLORS.textOnPrimary, letterSpacing: 1 },
   serviceLink: { flexDirection: 'row', alignItems: 'center', padding: SPACING.md, borderRadius: BORDER_RADIUS.xl, backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.border, marginBottom: SPACING.sm, gap: SPACING.md },
@@ -374,7 +582,6 @@ const styles = StyleSheet.create({
   emptyContainer: { alignItems: 'center', paddingVertical: SPACING.xxl },
   emptyText: { fontSize: FONT_SIZE.lg, color: COLORS.textSecondary, marginTop: SPACING.md },
   emptySubtext: { fontSize: FONT_SIZE.sm, color: COLORS.textLight, marginTop: SPACING.xs, textAlign: 'center' },
-  sosButton: { position: 'absolute', bottom: 100, right: SPACING.md, width: 50, height: 50, borderRadius: 25, backgroundColor: COLORS.accent, justifyContent: 'center', alignItems: 'center', elevation: 8 },
   quickActionsRow: { flexDirection: 'row', gap: SPACING.sm, marginTop: SPACING.md },
   quickActionLink: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: SPACING.md, borderRadius: BORDER_RADIUS.xl, backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.border },
   quickActionText: { fontSize: FONT_SIZE.sm, fontWeight: '600', color: COLORS.textSecondary },

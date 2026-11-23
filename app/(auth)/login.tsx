@@ -31,14 +31,14 @@ export default function LoginScreen() {
 
     if (!email.trim()) {
       newErrors.email = 'El correo es requerido';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Correo inválido';
+    } else if (!/\S+@\S+\.\S+/.test(email.trim())) {
+      newErrors.email = 'El formato del correo es inválido';
     }
 
     if (!password) {
       newErrors.password = 'La contraseña es requerida';
-    } else if (password.length < 8) {
-      newErrors.password = 'Mínimo 6 caracteres';
+    } else if (password.length < 6) {
+      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
     }
 
     setErrors(newErrors);
@@ -49,11 +49,17 @@ export default function LoginScreen() {
     if (!validate()) return;
 
     setLoading(true);
+    setErrors({});
     try {
       await login(email.trim().toLowerCase(), password);
       router.replace('/(main)/home');
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo iniciar sesión');
+      if (error.code === 'USER_NOT_FOUND') {
+        setErrors((prev) => ({ ...prev, email: error.message }));
+      } else if (error.code === 'INVALID_PASSWORD') {
+        setErrors((prev) => ({ ...prev, password: error.message }));
+      }
+      Alert.alert('No se pudo iniciar sesión', error.message || 'Credenciales inválidas');
     } finally {
       setLoading(false);
     }

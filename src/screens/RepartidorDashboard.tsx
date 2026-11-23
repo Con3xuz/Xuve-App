@@ -14,8 +14,21 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../stores/authStore';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
 import api from '../api';
+import MaintenanceView from '../components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 export default function RepartidorDashboard() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Panel de Repartidor"
+        description="El servicio de entregas y delivery se encuentra temporalmente en pausa mientras priorizamos el servicio de transporte Xuve."
+        showBackButton={false}
+      />
+    );
+  }
+
   const router = useRouter();
   const { user, refreshUser } = useAuthStore();
   const [isOnline, setIsOnline] = useState(false);

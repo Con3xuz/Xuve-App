@@ -47,7 +47,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await setToken(token);
       set({ user, token, isAuthenticated: true, isLoading: false });
     } catch (error: any) {
-      throw new Error(error.response?.data?.detail || 'Error al iniciar sesión');
+      const detail = error.response?.data?.detail;
+      const message = typeof detail === 'object' && detail?.message
+        ? detail.message
+        : (typeof detail === 'string' ? detail : 'Error al iniciar sesión');
+      const err: any = new Error(message);
+      err.code = typeof detail === 'object' ? detail?.code : undefined;
+      throw err;
     }
   },
 

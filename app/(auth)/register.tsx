@@ -18,11 +18,11 @@ import { Button, Input } from '../../src/components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, XUVE_LOGO_URL } from '../../src/constants/theme';
 
 const ROLES = [
-  { id: 'user', label: 'Cliente', icon: 'person', desc: 'Solicita servicios' },
-  { id: 'socio_conductor', label: 'Conductor', icon: 'car', desc: 'Conduce y gana' },
-  { id: 'socio_repartidor', label: 'Repartidor', icon: 'bicycle', desc: 'Entrega pedidos' },
-  { id: 'socio_comercial', label: 'Comercio', icon: 'storefront', desc: 'Vende productos' },
-  { id: 'medico', label: 'Médico', icon: 'medical', desc: 'Recetas digitales' },
+  { id: 'user', label: 'Cliente', icon: 'person', desc: 'Solicita servicios', disabled: false },
+  { id: 'socio_conductor', label: 'Conductor', icon: 'car', desc: 'Conduce y gana', disabled: false },
+  { id: 'socio_repartidor', label: 'Repartidor', icon: 'bicycle', desc: 'En mantenimiento', disabled: true },
+  { id: 'socio_comercial', label: 'Comercio', icon: 'storefront', desc: 'En mantenimiento', disabled: true },
+  { id: 'medico', label: 'Médico', icon: 'medical', desc: 'En mantenimiento', disabled: true },
 ];
 
 export default function RegisterScreen() {
@@ -71,6 +71,13 @@ export default function RegisterScreen() {
     }
     if (password !== confirmPassword) {
       newErrors.confirmPassword = 'Las contraseñas no coinciden';
+    }
+    const roleObj = ROLES.find(r => r.id === selectedRole);
+    if (!roleObj || roleObj.disabled) {
+      newErrors.role = 'Rol en mantenimiento';
+      Alert.alert('Módulo en Mantenimiento', 'La opción seleccionada está en mantenimiento. Por favor selecciona Cliente o Conductor.');
+      setErrors(newErrors);
+      return false;
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -131,26 +138,51 @@ export default function RegisterScreen() {
       {/* Role Selection */}
       <Text style={styles.sectionTitle}>¿Cómo usarás Xuve?</Text>
       <View style={styles.rolesGrid}>
-        {ROLES.map((role) => (
-          <TouchableOpacity
-            key={role.id}
-            style={[
-              styles.roleCard,
-              selectedRole === role.id && styles.roleCardActive,
-            ]}
-            onPress={() => setSelectedRole(role.id)}
-          >
-            <Ionicons
-              name={role.icon as any}
-              size={24}
-              color={selectedRole === role.id ? COLORS.primary : COLORS.textSecondary}
-            />
-            <Text style={[styles.roleLabel, selectedRole === role.id && styles.roleLabelActive]}>
-              {role.label}
-            </Text>
-            <Text style={styles.roleDesc}>{role.desc}</Text>
-          </TouchableOpacity>
-        ))}
+        {ROLES.map((role) => {
+          const isDisabled = !!role.disabled;
+          return (
+            <TouchableOpacity
+              key={role.id}
+              disabled={isDisabled}
+              style={[
+                styles.roleCard,
+                selectedRole === role.id && styles.roleCardActive,
+                isDisabled && styles.roleCardDisabled,
+              ]}
+              onPress={() => setSelectedRole(role.id)}
+              activeOpacity={isDisabled ? 1 : 0.7}
+            >
+              {isDisabled && (
+                <View style={styles.maintenanceBadge}>
+                  <Text style={styles.maintenanceBadgeText}>Mantenimiento</Text>
+                </View>
+              )}
+              <Ionicons
+                name={role.icon as any}
+                size={24}
+                color={
+                  isDisabled
+                    ? COLORS.textLight
+                    : selectedRole === role.id
+                    ? COLORS.primary
+                    : COLORS.textSecondary
+                }
+              />
+              <Text
+                style={[
+                  styles.roleLabel,
+                  selectedRole === role.id && styles.roleLabelActive,
+                  isDisabled && styles.roleLabelDisabled,
+                ]}
+              >
+                {role.label}
+              </Text>
+              <Text style={[styles.roleDesc, isDisabled && { color: COLORS.warning }]}>
+                {role.desc}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       <Button
@@ -355,11 +387,35 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     alignItems: 'center',
     gap: SPACING.xs,
+    position: 'relative',
   },
   roleCardActive: { borderColor: COLORS.primary, borderWidth: 2, backgroundColor: COLORS.primary + '10' },
+  roleCardDisabled: {
+    opacity: 0.55,
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+  },
   roleLabel: { fontSize: FONT_SIZE.md, fontWeight: '600', color: COLORS.text },
   roleLabelActive: { color: COLORS.primary },
+  roleLabelDisabled: { color: COLORS.textLight },
   roleDesc: { fontSize: FONT_SIZE.xs, color: COLORS.textLight, textAlign: 'center' },
+  maintenanceBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: COLORS.warning + '25',
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: BORDER_RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.warning + '40',
+  },
+  maintenanceBadgeText: {
+    fontSize: 8,
+    fontWeight: '700',
+    color: COLORS.warning,
+    letterSpacing: 0.5,
+  },
   continueButton: { marginTop: SPACING.sm },
 
   // Step 2

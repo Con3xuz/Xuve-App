@@ -6,6 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -23,6 +25,14 @@ interface Service {
   dropoff_address: string;
   fare: number;
   created_at: string;
+  vehicle_type?: string;
+  payment_method?: string;
+  notes?: string;
+  driver_name?: string;
+  driver_phone?: string;
+  driver_id?: string;
+  distance_km?: number;
+  duration_min?: number;
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
@@ -41,6 +51,23 @@ export default function ServicesScreen() {
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+
+  const handleOpenService = async (service: Service) => {
+    setSelectedService(service);
+    setLoadingDetail(true);
+    try {
+      const res = await api.get(`/services/${service.service_id}`);
+      if (res.data) {
+        setSelectedService((prev) => ({ ...(prev || service), ...res.data }));
+      }
+    } catch {
+      // Mantiene los datos básicos ya cargados si el detalle falla
+    } finally {
+      setLoadingDetail(false);
+    }
+  };
 
   const fetchServices = async () => {
     try {
@@ -70,7 +97,12 @@ export default function ServicesScreen() {
   const renderServiceCard = (service: Service) => {
     const statusConfig = STATUS_CONFIG[service.status] || STATUS_CONFIG.pending;
     return (
-      <View key={service.service_id} style={styles.serviceCard}>
+      <TouchableOpacity
+        key={service.service_id}
+        style={styles.serviceCard}
+        activeOpacity={0.8}
+        onPress={() => handleOpenService(service)}
+      >
         <View style={styles.serviceHeader}>
           <View style={styles.serviceTypeRow}>
             <Ionicons name={service.service_type === 'taxi' ? 'car' : 'bicycle'} size={18} color={COLORS.primary} />
@@ -95,9 +127,12 @@ export default function ServicesScreen() {
           <Text style={styles.serviceDate}>
             {new Date(service.created_at).toLocaleDateString('es-VE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
           </Text>
-          {service.fare > 0 && <Text style={styles.serviceFare}>${service.fare.toFixed(2)}</Text>}
+          <View style={styles.footerRight}>
+            {service.fare > 0 && <Text style={styles.serviceFare}>${service.fare.toFixed(2)}</Text>}
+            <Ionicons name="chevron-forward" size={16} color={COLORS.textSecondary} />
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -140,6 +175,120 @@ export default function ServicesScreen() {
       >
         <Ionicons name="add" size={24} color={COLORS.textOnPrimary} />
       </TouchableOpacity>
+
+      {/* Modal de Detalles del Servicio */}
+      <Modal
+        visible={!!selectedService}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setSelectedService(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>DETALLE DEL SERVICIO</Text>
+              <TouchableOpacity onPress={() => setSelectedService(null)} style={styles.modalCloseBtn}>
+                <Ionicons name="close" size={22} color={COLORS.text} />
+              </TouchableOpacity>
+            </View>
+
+            {selectedService && (() => {
+              const st = STATUS_CONFIG[selectedService.status] || STATUS_CONFIG.pending;
+              const isActive = ['pending', 'searching', 'accepted', 'arrived', 'in_progress'].includes(selectedService.status);
+              return (
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View style={styles.modalTopRow}>
+                    <View style={styles.serviceTypeRow}>
+                      <Ionicons
+                        name={selectedService.service_type === 'taxi' ? 'car' : 'bicycle'}
+                        size={20}
+                        color={COLORS.primary}
+                      />
+                      <Text style={styles.modalServiceType}>
+                        {selectedService.vehicle_type || (selectedService.service_type === 'taxi' ? 'Viaje / Taxi' : 'Delivery')}
+                      </Text>
+                    </View>
+                    <View style={[styles.statusBadge, { backgroundColor: st.color + '20' }]}>
+                      <Text style={[styles.statusText, { color: st.color }]}>{st.label}</Text>
+                    </View>
+                  </View>
+
+                  {loadingDetail && (
+                    <ActivityIndicator size="small" color={COLORS.primary} style={{ marginVertical: SPACING.sm }} />
+                  )}
+
+                  <View style={styles.modalSection}>
+                    <Text style={styles.modalLabel}>RECORRIDO</Text>
+                    <View style={styles.addressRow}>
+                      <View style={[styles.dot, { backgroundColor: COLORS.primary }]} />
+                      <Text style={styles.modalAddressText}>{selectedService.pickup_address || 'Origen'}</Text>
+                    </View>
+                    <View style={[styles.addressLine, { marginVertical: 4 }]} />
+                    <View style={styles.addressRow}>
+                      <View style={[styles.dot, { backgroundColor: COLORS.accent }]} />
+                      <Text style={styles.modalAddressText}>{selectedService.dropoff_address || 'Destino'}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.modalSection}>
+                    <Text style={styles.modalLabel}>INFORMACIÓN</Text>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailKey}>ID</Text>
+                      <Text style={styles.detailVal}>{selectedService.service_id}</Text>
+                    </View>
+                    <View style={styles.detailRow}>
+                      <Text style={styles.detailKey}>Fecha</Text>
+                      <Text style={styles.detailVal}>
+                        {new Date(selectedService.created_at).toLocaleString('es-VE')}
+                      </Text>
+                    </View>
+                    {selectedService.fare > 0 && (
+                      <View style={styles.detailRow}>
+                        <Text style={styles.detailKey}>Tarifa</Text>
+                        <Text style={[styles.detailVal, { color: COLORS.primary, fontWeight: 'bold' }]}>
+                          ${Number(selectedService.fare).toFixed(2)}
+                        </Text>
+                      </View>
+                    )}
+                    {selectedService.payment_method && (
+                      <View style={styles.detailRow}>
+                        <Text style={styles.detailKey}>Pago</Text>
+                        <Text style={styles.detailVal}>{selectedService.payment_method}</Text>
+                      </View>
+                    )}
+                    {selectedService.driver_name && (
+                      <View style={styles.detailRow}>
+                        <Text style={styles.detailKey}>Conductor</Text>
+                        <Text style={styles.detailVal}>{selectedService.driver_name}</Text>
+                      </View>
+                    )}
+                    {selectedService.notes ? (
+                      <View style={styles.detailRow}>
+                        <Text style={styles.detailKey}>Notas</Text>
+                        <Text style={styles.detailVal}>{selectedService.notes}</Text>
+                      </View>
+                    ) : null}
+                  </View>
+
+                  {isActive && (
+                    <TouchableOpacity
+                      style={styles.trackButton}
+                      onPress={() => {
+                        const id = selectedService.service_id;
+                        setSelectedService(null);
+                        router.push({ pathname: '/(main)/active-ride', params: { serviceId: id } });
+                      }}
+                    >
+                      <Ionicons name="navigate" size={18} color={COLORS.textOnPrimary} />
+                      <Text style={styles.trackButtonText}>SEGUIR VIAJE EN VIVO</Text>
+                    </TouchableOpacity>
+                  )}
+                </ScrollView>
+              );
+            })()}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -167,8 +316,24 @@ const styles = StyleSheet.create({
   addressLine: { width: 2, height: 16, backgroundColor: COLORS.border, marginLeft: 4, marginVertical: 2 },
   addressText: { flex: 1, fontSize: FONT_SIZE.md, color: COLORS.text },
   serviceFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: SPACING.md, borderTopWidth: 1, borderTopColor: COLORS.border },
+  footerRight: { flexDirection: 'row', alignItems: 'center', gap: SPACING.xs },
   serviceDate: { fontSize: FONT_SIZE.sm, color: COLORS.textSecondary },
   serviceFare: { fontSize: FONT_SIZE.lg, fontWeight: 'bold', color: COLORS.primary },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'flex-end' },
+  modalCard: { backgroundColor: COLORS.surface, borderTopLeftRadius: BORDER_RADIUS.xl, borderTopRightRadius: BORDER_RADIUS.xl, padding: SPACING.lg, maxHeight: '80%', borderTopWidth: 1, borderColor: COLORS.border },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.md },
+  modalTitle: { fontSize: FONT_SIZE.md, fontWeight: 'bold', color: COLORS.primary, letterSpacing: 1.5 },
+  modalCloseBtn: { padding: 4 },
+  modalTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: SPACING.md },
+  modalServiceType: { fontSize: FONT_SIZE.lg, fontWeight: '700', color: COLORS.text },
+  modalSection: { backgroundColor: 'rgba(0,0,0,0.25)', borderRadius: BORDER_RADIUS.lg, padding: SPACING.md, marginBottom: SPACING.md, borderWidth: 1, borderColor: COLORS.border },
+  modalLabel: { fontSize: FONT_SIZE.xs, fontWeight: '700', color: COLORS.textSecondary, letterSpacing: 1, marginBottom: SPACING.sm },
+  modalAddressText: { flex: 1, fontSize: FONT_SIZE.md, color: COLORS.text },
+  detailRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: COLORS.border + '30' },
+  detailKey: { fontSize: FONT_SIZE.sm, color: COLORS.textSecondary },
+  detailVal: { fontSize: FONT_SIZE.sm, color: COLORS.text, maxWidth: '65%', textAlign: 'right' },
+  trackButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: COLORS.primary, paddingVertical: SPACING.md, borderRadius: BORDER_RADIUS.lg, marginTop: SPACING.xs },
+  trackButtonText: { fontSize: FONT_SIZE.md, fontWeight: 'bold', color: COLORS.textOnPrimary, letterSpacing: 1 },
   emptyContainer: { alignItems: 'center', justifyContent: 'center', paddingVertical: SPACING.xxl * 2 },
   emptyText: { fontSize: FONT_SIZE.lg, color: COLORS.textSecondary, marginTop: SPACING.md },
   emptySubtext: { fontSize: FONT_SIZE.sm, color: COLORS.textLight, marginTop: SPACING.xs, textAlign: 'center' },

@@ -20,12 +20,12 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/t
 import api from '../../src/api';
 
 const ROLES = [
-  { id: 'user', label: 'Cliente', desc: 'Verificacion de identidad', icon: 'person', color: '#14B8A6', steps: ['identity'] },
-  { id: 'socio_conductor', label: 'Conductor', desc: 'Taxi o carro particular', icon: 'car', color: '#4DFF91', steps: ['personal', 'license', 'vehicle'] },
-  { id: 'socio_repartidor', label: 'Repartidor', desc: 'Moto delivery o bicicleta', icon: 'bicycle', color: '#3B82F6', steps: ['personal', 'license', 'vehicle'] },
-  { id: 'socio_comercial', label: 'Comercial', desc: 'Tienda, restaurante, farmacia', icon: 'storefront', color: '#EC4899', steps: ['personal', 'store'] },
-  { id: 'medico', label: 'Medico', desc: 'Profesional de la salud', icon: 'medical', color: '#14B8A6', steps: ['personal', 'medical_license'] },
-  { id: 'rent_owner', label: 'Rent Owner', desc: 'Propietario vehiculo alquiler', icon: 'key', color: '#F59E0B', steps: ['personal', 'rent'] },
+  { id: 'user', label: 'Cliente', desc: 'Verificación de identidad', icon: 'person', color: '#14B8A6', steps: ['identity'], disabled: false },
+  { id: 'socio_conductor', label: 'Conductor', desc: 'Taxi, carro particular o mototaxi', icon: 'car', color: '#4DFF91', steps: ['personal', 'license', 'vehicle'], disabled: false },
+  { id: 'socio_repartidor', label: 'Repartidor', desc: 'En mantenimiento', icon: 'bicycle', color: '#3B82F6', steps: ['personal', 'license', 'vehicle'], disabled: true },
+  { id: 'socio_comercial', label: 'Comercial', desc: 'En mantenimiento', icon: 'storefront', color: '#EC4899', steps: ['personal', 'store'], disabled: true },
+  { id: 'medico', label: 'Médico', desc: 'En mantenimiento', icon: 'medical', color: '#14B8A6', steps: ['personal', 'medical_license'], disabled: true },
+  { id: 'rent_owner', label: 'Rent Owner', desc: 'En mantenimiento', icon: 'key', color: '#F59E0B', steps: ['personal', 'rent'], disabled: true },
 ];
 
 const STORE_CATS = [
@@ -46,7 +46,8 @@ const VEHICLE_TYPES_REPARTIDOR = [
 export default function KYCScreen() {
   const router = useRouter();
   const { user } = useAuthStore();
-  const [selectedRole, setSelectedRole] = useState<string | null>(user?.role || null);
+  const initialRole = (user?.role === 'socio_conductor' || user?.role === 'user') ? user.role : null;
+  const [selectedRole, setSelectedRole] = useState<string | null>(initialRole);
   const [currentStep, setCurrentStep] = useState(0); // 0 = role selection
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -65,6 +66,14 @@ export default function KYCScreen() {
   const totalSteps = steps.length + 1;
 
   const handleRoleSelect = (roleId: string) => {
+    const target = ROLES.find(r => r.id === roleId);
+    if (target?.disabled) {
+      Alert.alert(
+        'Módulo en Mantenimiento',
+        `La verificación para ${target.label} está temporalmente en mantenimiento. Actualmente solo está disponible la verificación para Cliente y Conductor.`
+      );
+      return;
+    }
     setSelectedRole(roleId);
     setCurrentStep(1);
   };
@@ -82,6 +91,10 @@ export default function KYCScreen() {
   };
 
   const handleSubmit = async () => {
+    if (selectedRole !== 'user' && selectedRole !== 'socio_conductor') {
+      Alert.alert('Rol no disponible', 'Por el momento solo está disponible la verificación de Cliente o Conductor.');
+      return;
+    }
     setLoading(true);
     try {
       const kycData: any = {
@@ -172,20 +185,40 @@ export default function KYCScreen() {
     if (currentStep === 0) {
       return (
         <View style={styles.stepContent}>
-          <Text style={styles.stepTitle}>En que quieres convertirte?</Text>
+          <Text style={styles.stepTitle}>¿En qué quieres convertirte?</Text>
           <Text style={styles.stepDesc}>Selecciona el rol para verificar tu cuenta</Text>
-          {ROLES.map(role => (
-            <TouchableOpacity key={role.id} style={[styles.roleCard, selectedRole === role.id && { borderColor: role.color }]} onPress={() => handleRoleSelect(role.id)}>
-              <View style={[styles.roleIcon, { backgroundColor: role.color + '20' }]}>
-                <Ionicons name={role.icon as any} size={24} color={role.color} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.roleLabel}>{role.label}</Text>
-                <Text style={styles.roleDesc}>{role.desc}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={COLORS.textLight} />
-            </TouchableOpacity>
-          ))}
+          {ROLES.map(role => {
+            const isDisabled = !!role.disabled;
+            return (
+              <TouchableOpacity
+                key={role.id}
+                disabled={isDisabled}
+                style={[
+                  styles.roleCard,
+                  selectedRole === role.id && { borderColor: role.color },
+                  isDisabled && styles.roleCardDisabled,
+                ]}
+                onPress={() => handleRoleSelect(role.id)}
+                activeOpacity={isDisabled ? 1 : 0.7}
+              >
+                <View style={[styles.roleIcon, { backgroundColor: role.color + (isDisabled ? '10' : '20') }]}>
+                  <Ionicons name={role.icon as any} size={24} color={isDisabled ? COLORS.textLight : role.color} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.roleHeaderRow}>
+                    <Text style={[styles.roleLabel, isDisabled && styles.roleLabelDisabled]}>{role.label}</Text>
+                    {isDisabled && (
+                      <View style={styles.maintenanceBadge}>
+                        <Text style={styles.maintenanceBadgeText}>Mantenimiento</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={[styles.roleDesc, isDisabled && { color: COLORS.warning }]}>{role.desc}</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={isDisabled ? 'transparent' : COLORS.textLight} />
+              </TouchableOpacity>
+            );
+          })}
         </View>
       );
     }
@@ -419,9 +452,30 @@ const styles = StyleSheet.create({
   stepTitle: { fontSize: FONT_SIZE.xl, fontWeight: 'bold', color: COLORS.text },
   stepDesc: { fontSize: FONT_SIZE.sm, color: COLORS.textSecondary, marginBottom: SPACING.sm },
   roleCard: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md, backgroundColor: COLORS.surface, borderRadius: BORDER_RADIUS.xl, padding: SPACING.md, borderWidth: 1.5, borderColor: COLORS.border },
+  roleCardDisabled: {
+    opacity: 0.55,
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  roleHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.xs + 2 },
   roleIcon: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center' },
   roleLabel: { fontSize: FONT_SIZE.md, fontWeight: '600', color: COLORS.text },
+  roleLabelDisabled: { color: COLORS.textLight },
   roleDesc: { fontSize: FONT_SIZE.xs, color: COLORS.textSecondary },
+  maintenanceBadge: {
+    backgroundColor: COLORS.warning + '25',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: BORDER_RADIUS.sm,
+    borderWidth: 1,
+    borderColor: COLORS.warning + '40',
+  },
+  maintenanceBadgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: COLORS.warning,
+    letterSpacing: 0.5,
+  },
   fieldLabel: { fontSize: FONT_SIZE.sm, color: COLORS.textSecondary, marginBottom: 4 },
   input: { backgroundColor: 'rgba(0,0,0,0.4)', borderWidth: 1, borderColor: COLORS.border, borderRadius: BORDER_RADIUS.lg, padding: SPACING.md, fontSize: FONT_SIZE.md, color: COLORS.text, minHeight: 48 },
   formRow: { flexDirection: 'row', gap: SPACING.sm },

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/constants/theme';
 import api from '../../src/api';
+import MaintenanceView from '../../src/components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 const CATEGORIES = [
   { id: 'all', label: 'Todos', icon: 'grid' },
@@ -63,6 +66,16 @@ export const addToCartGlobal = (product: Product) => {
 export const clearCartGlobal = () => { globalCart = []; };
 
 export default function MarketScreen() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Xuve Market"
+        icon="storefront-outline"
+        description="El módulo de compras en comercios y delivery de comida se encuentra temporalmente en pausa técnica mientras optimizamos el servicio de Transporte Urbano (Xuve Ride)."
+      />
+    );
+  }
+
   const router = useRouter();
   const [stores, setStores] = useState<Store[]>([]);
   const [products, setProducts] = useState<Product[]>([]);

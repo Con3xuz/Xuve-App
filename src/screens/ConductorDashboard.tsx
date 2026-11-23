@@ -16,6 +16,7 @@ import { useAuthStore } from '../stores/authStore';
 import { Card, Button } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
 import api from '../api';
+import XuveMapView from '../components/XuveMapView';
 
 export default function ConductorDashboard() {
   const router = useRouter();
@@ -154,11 +155,18 @@ export default function ConductorDashboard() {
         </View>
       </View>
 
-      {/* Map placeholder */}
-      <View style={styles.mapPlaceholder}>
-        <View style={[styles.statusDot, { backgroundColor: isOnline ? COLORS.primary : COLORS.accent }]} />
-        <Ionicons name="navigate-circle" size={64} color={isOnline ? COLORS.primary + '50' : COLORS.textLight + '30'} />
-        <Text style={styles.mapText}>{isOnline ? 'Buscando pasajeros...' : 'Conéctate para recibir viajes'}</Text>
+      {/* Mapa interactivo en tiempo real para el conductor */}
+      <View style={styles.mapWrapper}>
+        <XuveMapView
+          isConductorMode={true}
+          style={styles.conductorMap}
+        />
+        <View style={styles.conductorOverlay}>
+          <View style={[styles.statusDot, { backgroundColor: isOnline ? COLORS.primary : COLORS.accent }]} />
+          <Text style={styles.conductorOverlayText}>
+            {isOnline ? 'En línea • Cobertura activa' : 'Desconectado • Actívate para recibir viajes'}
+          </Text>
+        </View>
       </View>
 
       {/* Subscription Banner */}
@@ -257,8 +265,39 @@ const styles = StyleSheet.create({
   ratingText: { fontSize: FONT_SIZE.sm, color: '#F59E0B' },
   onlineToggle: { alignItems: 'center', gap: SPACING.xs },
   onlineLabel: { fontSize: FONT_SIZE.xs, fontWeight: '700', letterSpacing: 1 },
-  mapPlaceholder: { height: 180, backgroundColor: COLORS.surface, borderRadius: BORDER_RADIUS.xxl, borderWidth: 1, borderColor: COLORS.border, justifyContent: 'center', alignItems: 'center', marginBottom: SPACING.md, position: 'relative' },
-  statusDot: { width: 12, height: 12, borderRadius: 6, position: 'absolute', top: SPACING.md, right: SPACING.md },
+  mapWrapper: {
+    height: 220,
+    borderRadius: BORDER_RADIUS.xxl,
+    overflow: 'hidden',
+    marginBottom: SPACING.md,
+    position: 'relative',
+    borderWidth: 1.5,
+    borderColor: 'rgba(77, 255, 145, 0.3)',
+  },
+  conductorMap: {
+    height: '100%',
+    width: '100%',
+  },
+  conductorOverlay: {
+    position: 'absolute',
+    bottom: SPACING.sm,
+    left: SPACING.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(10, 10, 18, 0.88)',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 6,
+    borderRadius: BORDER_RADIUS.full,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  conductorOverlayText: {
+    fontSize: FONT_SIZE.xs,
+    color: COLORS.text,
+    fontWeight: '600',
+  },
+  statusDot: { width: 10, height: 10, borderRadius: 5 },
   mapText: { fontSize: FONT_SIZE.sm, color: COLORS.textSecondary, marginTop: SPACING.sm },
   subscriptionBanner: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md, backgroundColor: '#F59E0B15', borderWidth: 1, borderColor: '#F59E0B30', borderRadius: BORDER_RADIUS.xl, padding: SPACING.md, marginBottom: SPACING.md },
   subBannerTitle: { fontSize: FONT_SIZE.md, fontWeight: '600', color: '#F59E0B' },

@@ -23,8 +23,8 @@ import { useQuote } from '../hooks/useQuote';
 import { VEHICLE_OPTIONS } from '../features/rides';
 
 const SERVICE_TYPES = [
-  { id: 'ride', label: 'Ride', icon: 'car', desc: 'Transporte personal' },
-  { id: 'delivery', label: 'Delivery', icon: 'bicycle', desc: 'Entrega de productos' },
+  { id: 'ride', label: 'Viaje Xuve', icon: 'car', desc: 'Transporte de pasajeros', available: true },
+  { id: 'delivery', label: 'Delivery', icon: 'bicycle', desc: 'En mantenimiento', available: false },
 ];
 
 export default function RequestServiceScreen() {
@@ -130,29 +130,44 @@ export default function RequestServiceScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>¿Qué necesitas?</Text>
           <View style={styles.serviceTypes}>
-            {SERVICE_TYPES.map((type) => (
-              <TouchableOpacity
-                key={type.id}
-                style={[
-                  styles.serviceTypeCard,
-                  serviceType === type.id && styles.serviceTypeCardActive,
-                ]}
-                onPress={() => setServiceType(type.id)}
-              >
-                <Ionicons
-                  name={type.icon as any}
-                  size={24}
-                  color={serviceType === type.id ? COLORS.primary : COLORS.textSecondary}
-                />
-                <Text style={[
-                  styles.serviceTypeLabel,
-                  serviceType === type.id && styles.serviceTypeLabelActive,
-                ]}>
-                  {type.label}
-                </Text>
-                <Text style={styles.serviceTypeDesc}>{type.desc}</Text>
-              </TouchableOpacity>
-            ))}
+            {SERVICE_TYPES.map((type) => {
+              const isAvailable = type.available !== false;
+              return (
+                <TouchableOpacity
+                  key={type.id}
+                  style={[
+                    styles.serviceTypeCard,
+                    serviceType === type.id && styles.serviceTypeCardActive,
+                    !isAvailable && { opacity: 0.6 },
+                  ]}
+                  onPress={() => {
+                    if (!isAvailable) {
+                      Alert.alert(
+                        'Módulo en Mantenimiento',
+                        'El servicio de Delivery se encuentra temporalmente en pausa mientras optimizamos el servicio de transporte.'
+                      );
+                      return;
+                    }
+                    setServiceType(type.id);
+                  }}
+                >
+                  <Ionicons
+                    name={type.icon as any}
+                    size={24}
+                    color={serviceType === type.id ? COLORS.primary : isAvailable ? COLORS.textSecondary : COLORS.textLight}
+                  />
+                  <Text style={[
+                    styles.serviceTypeLabel,
+                    serviceType === type.id && styles.serviceTypeLabelActive,
+                  ]}>
+                    {type.label}
+                  </Text>
+                  <Text style={[styles.serviceTypeDesc, !isAvailable && { color: COLORS.warning }]}>
+                    {type.desc}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -196,17 +211,16 @@ export default function RequestServiceScreen() {
           )}
         </View>
 
-        {/* Mapa con la ruta real (Directions vía proxy del backend) */}
-        {pickupLocation && (
-          <View style={styles.section}>
-            <XuveMapView
-              origin={pickupLocation}
-              destination={serviceType === 'ride' ? dropoffLocation : null}
-              routeCoordinates={quote?.polyline}
-              showUserLocation
-              style={styles.mapView}
-            />
-            {serviceType === 'ride' && dropoffLocation && (
+        {/* Mapa interactivo para visualizar ruta y ubicación */}
+        <View style={styles.section}>
+          <XuveMapView
+            origin={pickupLocation}
+            destination={serviceType === 'ride' ? dropoffLocation : null}
+            routeCoordinates={quote?.polyline}
+            showUserLocation
+            style={styles.mapView}
+          />
+          {serviceType === 'ride' && dropoffLocation && (
               <View style={styles.routeInfo}>
                 {quoteLoading ? (
                   <ActivityIndicator size="small" color={COLORS.primary} />
@@ -227,7 +241,6 @@ export default function RequestServiceScreen() {
               </View>
             )}
           </View>
-        )}
 
         {/* Selección de vehículo con tarifa estimada (solo 'ride' con destino) */}
         {serviceType === 'ride' && dropoffLocation && (

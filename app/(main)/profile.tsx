@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -171,6 +171,24 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Banner Conviértete en Conductor (si es usuario) */}
+        {user?.role === 'user' && (
+          <TouchableOpacity
+            style={styles.driverBanner}
+            onPress={() => router.push('/(main)/driver-register')}
+            activeOpacity={0.8}
+          >
+            <View style={styles.driverBannerIcon}>
+              <Ionicons name="car-sport" size={24} color={COLORS.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.driverBannerTitle}>Regístrate como Conductor</Text>
+              <Text style={styles.driverBannerSub}>Conduce tu vehículo y genera ingresos diarios con Xuve</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={COLORS.primary} />
+          </TouchableOpacity>
+        )}
+
         {/* Menu Section 1 */}
         <View style={styles.menuSection}>
           <MenuItem icon="person-outline" label="Editar Perfil" onPress={openEditModal} />
@@ -297,6 +315,35 @@ const styles = StyleSheet.create({
   detailIcon: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
   detailLabel: { fontSize: FONT_SIZE.xs, color: COLORS.textLight },
   detailValue: { fontSize: FONT_SIZE.md, color: COLORS.text, marginTop: 2 },
+  driverBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+    backgroundColor: COLORS.primary + '12',
+    borderWidth: 1.5,
+    borderColor: COLORS.primary + '60',
+    padding: SPACING.md,
+    borderRadius: BORDER_RADIUS.xl,
+    marginBottom: SPACING.md,
+  },
+  driverBannerIcon: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: COLORS.primary + '25',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  driverBannerTitle: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '700',
+    color: COLORS.primary,
+  },
+  driverBannerSub: {
+    fontSize: FONT_SIZE.xs,
+    color: COLORS.textSecondary,
+    marginTop: 2,
+  },
   menuSection: { backgroundColor: COLORS.surface, borderRadius: BORDER_RADIUS.xl, borderWidth: 1, borderColor: COLORS.border, overflow: 'hidden', marginBottom: SPACING.md },
   menuItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: SPACING.md, borderBottomWidth: 1, borderBottomColor: COLORS.border, minHeight: 52 },
   menuItemLeft: { flexDirection: 'row', alignItems: 'center', gap: SPACING.md },

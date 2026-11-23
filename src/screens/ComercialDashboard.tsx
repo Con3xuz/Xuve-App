@@ -17,10 +17,23 @@ import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
 import api from '../api';
+import MaintenanceView from '../components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 const PURPLE = '#8B5CF6';
 
 export default function ComercialDashboard() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Panel de Comercio Aliado"
+        description="El módulo comercial y catálogo de tiendas está en mantenimiento temporal mientras optimizamos la plataforma de transporte."
+        showBackButton={false}
+      />
+    );
+  }
+
   const router = useRouter();
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'pedidos' | 'productos' | 'tienda'>('pedidos');

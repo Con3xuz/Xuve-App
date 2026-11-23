@@ -65,13 +65,43 @@ export async function autocompletePlaces(
   query: string,
   bias?: LatLng | null,
 ): Promise<GeoPrediction[]> {
-  const params: Record<string, any> = { query };
-  if (bias) {
-    params.lat = bias.latitude;
-    params.lng = bias.longitude;
+  try {
+    const params: Record<string, any> = { query };
+    if (bias) {
+      params.lat = bias.latitude;
+      params.lng = bias.longitude;
+    }
+    const data = await geoApi.autocomplete(params);
+    if (data && data.predictions && data.predictions.length > 0) {
+      return data.predictions;
+    }
+  } catch (err) {
+    console.warn('Backend autocomplete fallback:', err);
   }
-  const data = await geoApi.autocomplete(params);
-  return data.predictions ?? [];
+
+  // Fallback directo con OpenStreetMap Nominatim a nivel nacional
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query + ', Venezuela')}&format=json&countrycodes=ve&limit=8`;
+    const res = await fetch(url, { headers: { 'User-Agent': 'XuveApp/2.0' } });
+    if (res.ok) {
+      const list = await res.json();
+      return list.map((item: any) => {
+        const parts = (item.display_name || '').split(',');
+        return {
+          place_id: `osm_${item.place_id}`,
+          mainText: parts[0]?.trim() || item.name || query,
+          secondaryText: parts.slice(1, 4).join(',').trim() || 'Venezuela',
+          description: item.display_name,
+          latitude: parseFloat(item.lat),
+          longitude: parseFloat(item.lon),
+        };
+      });
+    }
+  } catch (e) {
+    /* noop */
+  }
+
+  return [];
 }
 
 /** Resuelve un place_id (de autocompletePlaces) a coordenadas + dirección. */
@@ -89,6 +119,16 @@ export async function geocodeAddress(address: string): Promise<GeoPlace[]> {
     latitude: r.latitude,
     longitude: r.longitude,
   }));
+}
+
+/** Geocoding inverso: coordenadas -> nombre legible de dirección. */
+export async function reverseGeocodeLocation(lat: number, lng: number): Promise<string> {
+  try {
+    const data = await geoApi.reverseGeocode({ lat, lng });
+    return data.name || data.address || `Punto (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+  } catch {
+    return `Punto (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+  }
 }
 
 /** Ruta entre dos puntos: distancia, duración y polyline listo para el mapa. */

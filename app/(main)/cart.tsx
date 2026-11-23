@@ -16,8 +16,21 @@ import { useAuthStore } from '../../src/stores/authStore';
 import { Button } from '../../src/components/ui';
 import api from '../../src/api';
 import { getCart, clearCartGlobal } from './market';
+import MaintenanceView from '../../src/components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 export default function CartScreen() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Carrito de Compras"
+        icon="cart-outline"
+        description="El carrito y checkout de compras en comercios está temporalmente en pausa técnica."
+      />
+    );
+  }
+
   const router = useRouter();
   const { user, refreshUser } = useAuthStore();
   const [cart, setCartItems] = useState(getCart());

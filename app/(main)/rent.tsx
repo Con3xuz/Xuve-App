@@ -19,6 +19,9 @@ import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/co
 import { useAuthStore } from '../../src/stores/authStore';
 import { Button } from '../../src/components/ui';
 import api from '../../src/api';
+import MaintenanceView from '../../src/components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 const DEPOSIT_MULTIPLIER = 2;
 
@@ -60,6 +63,16 @@ interface Rental {
 }
 
 export default function RentCarScreen() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Rent-a-Car"
+        icon="key-outline"
+        description="El servicio de alquiler de vehículos entre particulares se encuentra en mantenimiento mientras potenciamos el servicio de Transporte Urbano (Xuve Ride)."
+      />
+    );
+  }
+
   const router = useRouter();
   const { user, refreshUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'available' | 'my-cars' | 'my-rentals'>('available');

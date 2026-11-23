@@ -8,6 +8,7 @@ import {
   FlatList,
   ActivityIndicator,
   Keyboard,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
@@ -49,12 +50,14 @@ async function searchWithProxy(
 ): Promise<LocationResult[]> {
   try {
     const predictions = await autocompletePlaces(query, bias ?? null);
-    return predictions.map((p) => ({
+    return predictions.map((p: any) => ({
       id: `g_${p.place_id}`,
       name: p.description,
       mainText: p.mainText,
       secondaryText: p.secondaryText,
       placeId: p.place_id,
+      lat: p.latitude ?? p.lat,
+      lng: p.longitude ?? p.lng,
       source: 'google' as const,
     }));
   } catch (e) {
@@ -182,6 +185,8 @@ export default function LocationSearchInput({
               <TouchableOpacity
                 style={styles.suggestionItem}
                 onPress={() => handleSelectSuggestion(item)}
+                // @ts-ignore - En web previene que el blur del TextInput cierre la lista antes del click
+                onMouseDown={Platform.OS === 'web' ? (e: any) => e.preventDefault() : undefined}
               >
                 <Ionicons name="location" size={16} color={iconColor} style={{ marginTop: 2 }} />
                 <View style={styles.suggestionTextContainer}>
@@ -208,6 +213,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     zIndex: 100,
+    overflow: 'visible',
   },
   inputWrapper: {
     flexDirection: 'row',

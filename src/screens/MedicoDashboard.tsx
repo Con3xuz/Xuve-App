@@ -16,10 +16,23 @@ import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
 import api from '../api';
+import MaintenanceView from '../components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 const TEAL = '#14B8A6';
 
 export default function MedicoDashboard() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Panel Médico Xuve"
+        description="El módulo médico y de recetas digitales se encuentra en mantenimiento mientras nos enfocamos en el servicio de transporte."
+        showBackButton={false}
+      />
+    );
+  }
+
   const router = useRouter();
   const { user } = useAuthStore();
   const [prescriptions, setPrescriptions] = useState<any[]>([]);

@@ -18,12 +18,12 @@ import { Button } from '../../src/components/ui';
 import api from '../../src/api';
 
 const VEHICLE_TYPES = [
-  { id: 'moto', label: 'Moto', icon: 'bicycle', toll: '$0.50' },
-  { id: 'taxi', label: 'Taxi', icon: 'car', toll: '$1.00' },
-  { id: 'bus', label: 'Bus', icon: 'bus', toll: '$1.00' },
-  { id: 'encava', label: 'Encava', icon: 'bus', toll: '$1.00' },
-  { id: 'flete', label: 'Flete', icon: 'cube', toll: '$1.00' },
-  { id: 'cisterna', label: 'Cisterna', icon: 'water', toll: '$1.00' },
+  { id: 'moto', label: 'Moto', icon: 'bicycle', toll: '$0.50', available: true },
+  { id: 'taxi', label: 'Taxi / Carro', icon: 'car', toll: '$1.00', available: true },
+  { id: 'bus', label: 'Bus', icon: 'bus', toll: '$1.00', available: false },
+  { id: 'encava', label: 'Encava', icon: 'bus', toll: '$1.00', available: false },
+  { id: 'flete', label: 'Flete', icon: 'cube', toll: '$1.00', available: false },
+  { id: 'cisterna', label: 'Cisterna', icon: 'water', toll: '$1.00', available: false },
 ];
 
 const REQUIRED_DOCS = [
@@ -137,14 +137,41 @@ export default function DriverRegisterScreen() {
 
             <Text style={styles.formLabel}>Tipo de vehículo</Text>
             <View style={styles.vehicleGrid}>
-              {VEHICLE_TYPES.map(v => (
-                <TouchableOpacity key={v.id} style={[styles.vehicleCard, vehicleData.vehicleType === v.id && styles.vehicleCardActive]}
-                  onPress={() => setVehicleData(p => ({ ...p, vehicleType: v.id }))}>
-                  <Ionicons name={v.icon as any} size={24} color={vehicleData.vehicleType === v.id ? COLORS.primary : COLORS.textSecondary} />
-                  <Text style={[styles.vehicleLabel, vehicleData.vehicleType === v.id && { color: COLORS.primary }]}>{v.label}</Text>
-                  <Text style={styles.vehicleToll}>{v.toll}/día</Text>
-                </TouchableOpacity>
-              ))}
+              {VEHICLE_TYPES.map(v => {
+                const isAvailable = v.available !== false;
+                return (
+                  <TouchableOpacity
+                    key={v.id}
+                    style={[
+                      styles.vehicleCard,
+                      vehicleData.vehicleType === v.id && styles.vehicleCardActive,
+                      !isAvailable && { opacity: 0.5 },
+                    ]}
+                    onPress={() => {
+                      if (!isAvailable) {
+                        Alert.alert(
+                          'Módulo en Mantenimiento',
+                          'Por ahora el registro está enfocado en Taxi / Carro particular y Moto. Los vehículos pesados estarán disponibles próximamente.'
+                        );
+                        return;
+                      }
+                      setVehicleData(p => ({ ...p, vehicleType: v.id }));
+                    }}
+                  >
+                    <Ionicons
+                      name={v.icon as any}
+                      size={24}
+                      color={vehicleData.vehicleType === v.id ? COLORS.primary : isAvailable ? COLORS.textSecondary : COLORS.textLight}
+                    />
+                    <Text style={[styles.vehicleLabel, vehicleData.vehicleType === v.id && { color: COLORS.primary }]}>
+                      {v.label}
+                    </Text>
+                    <Text style={[styles.vehicleToll, !isAvailable && { color: COLORS.warning }]}>
+                      {isAvailable ? `${v.toll}/día` : 'Próximamente'}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             <View style={styles.ownerToggle}>

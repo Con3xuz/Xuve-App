@@ -17,10 +17,23 @@ import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants/theme';
 import api from '../api';
+import MaintenanceView from '../components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 const AMBER = '#F59E0B';
 
 export default function RentOwnerDashboard() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Panel Rent-a-Car"
+        description="El módulo de propietarios de Rent-a-Car está en mantenimiento temporal mientras priorizamos el servicio de transporte Xuve."
+        showBackButton={false}
+      />
+    );
+  }
+
   const router = useRouter();
   const { user, refreshUser } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'vehiculos' | 'solicitudes' | 'activos'>('vehiculos');

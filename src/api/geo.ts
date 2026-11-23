@@ -21,6 +21,9 @@ export const geoApi = {
   /** GET /api/geo/geocode */
   geocode: async <T = any>(params?: Query): Promise<T> =>
     (await api.get<T>('/geo/geocode', { params })).data,
+  /** GET /api/geo/reverse-geocode */
+  reverseGeocode: async <T = any>(params?: Query): Promise<T> =>
+    (await api.get<T>('/geo/reverse-geocode', { params })).data,
   /** GET /api/geo/place/{place_id} */
   placeDetails: async <T = any>(placeId: Id, params?: Query): Promise<T> =>
     (await api.get<T>(`/geo/place/${placeId}`, { params })).data,

@@ -24,6 +24,9 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../../src/constants/theme';
 import api from '../../src/api';
+import MaintenanceView from '../../src/components/MaintenanceView';
+
+const IS_MAINTENANCE = true;
 
 const PURPLE = '#8B5CF6';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -31,6 +34,16 @@ const CARD_WIDTH = (SCREEN_WIDTH - SPACING.md * 3) / 2;
 
 // ==================== MAIN COMPONENT ====================
 export default function ProductManagerScreen() {
+  if (IS_MAINTENANCE) {
+    return (
+      <MaintenanceView
+        moduleName="Gestor de Productos"
+        icon="cube-outline"
+        description="El módulo de carga y administración de inventario de comercios está temporalmente en mantenimiento técnico."
+      />
+    );
+  }
+
   const router = useRouter();
   const [products, setProducts] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
